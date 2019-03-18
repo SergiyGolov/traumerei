@@ -19,10 +19,18 @@ namespace Traumerei
         private void AddHandlers()
         {
             imgGenerate.GestureRecognizers.Add(new TapGestureRecognizer {
-                    Command = new Command(() => Debug.WriteLine("taped image once")),
+                Command = new Command((image) => {
+                    Debug.WriteLine("taped image once");
+                    ChangeBackground(image);
+                }),
                     NumberOfTapsRequired = 1,
                 }
             );
+        }
+
+        private static void ChangeBackground(Object view)
+        {
+            // Change background color
         }
     }
 }
