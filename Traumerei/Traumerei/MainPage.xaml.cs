@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,16 @@ namespace Traumerei
         public MainPage()
         {
             InitializeComponent();
+            AddHandlers();
+        }
+
+        private void AddHandlers()
+        {
+            imgGenerate.GestureRecognizers.Add(new TapGestureRecognizer {
+                    Command = new Command(() => Debug.WriteLine("taped image once")),
+                    NumberOfTapsRequired = 1,
+                }
+            );
         }
     }
 }
