@@ -2,11 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Traumerei"
+             xmlns:views="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              x:Class="Traumerei.MainPage">
 
     <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
-        <Image x:Name="imgGenerate"
-            BackgroundColor="RosyBrown"
+        <views:SKCanvasView x:Name="imgGenerated" PaintSurface="OnPainting"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand" />
         <Button x:Name="btnSave"
