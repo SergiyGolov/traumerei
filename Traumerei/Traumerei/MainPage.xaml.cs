@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Traumerei.Algorithme;
 using Xamarin.Forms;
 
 
@@ -15,13 +16,15 @@ namespace Traumerei
     public partial class MainPage : ContentPage
     {
         private SKBitmap imgBitmap;
-
+        private int width;
+        private int height;
+        private IImageGenerator generator;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
-           
+            generator = ImageGenerator_Random.GetInstance();
         }
 
         /// <summary>
@@ -31,7 +34,8 @@ namespace Traumerei
         {
             //Add handler on Image imgGenerate
             var tapGestureRecongnizer = new TapGestureRecognizer();
-            tapGestureRecongnizer.Tapped += (sender, e) => {
+            tapGestureRecongnizer.Tapped += (sender, e) =>
+            {
                 Debug.WriteLine("taped once");
                 Debug.Print("Type of sender: " + sender.GetType().ToString());
                 drawRandomImage();
@@ -56,21 +60,32 @@ namespace Traumerei
 
             img.BackgroundColor = randomColor;
 
-            
+
         }
 
         private void drawRandomImage()
         {
-           if (imgBitmap==null)
-                imgBitmap = new SKBitmap((int)imgGenerated.CanvasSize.ToFormsSize().Width, (int)imgGenerated.CanvasSize.ToFormsSize().Height);
-
-            Random rnd = new Random();
-            for (int x=0;x< imgBitmap.Width;x++)
+            if (imgBitmap == null)
             {
-                for (int y = 0; y < imgBitmap.Height; y++)
+                width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
+                height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
+                imgBitmap = new SKBitmap(width, height);
+                generator.SetDimensions(width, height);
+            }
+
+            float[,,] pixels = generator.Generate();
+
+            SKColor color = new SKColor(0,0,0);
+
+            for (int x = 0; x < width; x++)
+            {
+                for(int y = 0; y < height;y++)
                 {
-                    SKColor color = new SKColor((byte)rnd.Next(255), (byte)rnd.Next(255), (byte)rnd.Next(255));
-                    imgBitmap.SetPixel(x, y, color);
+                    imgBitmap.SetPixel(x, y, color
+                        .WithRed((byte)(pixels[x, y, 0]*255))
+                        .WithGreen((byte)(pixels[x, y, 1]*255))
+                        .WithBlue((byte)(pixels[x, y, 2]*255))
+                    );
                 }
             }
 
@@ -85,10 +100,10 @@ namespace Traumerei
 
             canvas.Clear();
 
-            if (imgBitmap!=null)
+            if (imgBitmap != null)
                 canvas.DrawBitmap(imgBitmap, 0, 0);
 
-            
+
         }
     }
 }
