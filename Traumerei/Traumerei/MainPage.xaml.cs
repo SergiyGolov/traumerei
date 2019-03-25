@@ -16,21 +16,36 @@ namespace Traumerei
             AddHandlers();
         }
 
+        /// <summary>
+        /// Add handlers to UI components
+        /// </summary>
         private void AddHandlers()
         {
-            imgGenerate.GestureRecognizers.Add(new TapGestureRecognizer {
-                Command = new Command((image) => {
-                    Debug.WriteLine("taped image once");
-                    ChangeBackground(image);
-                }),
-                    NumberOfTapsRequired = 1,
-                }
-            );
+            //Add handler on Image imgGenerate
+            var tapGestureRecongnizer = new TapGestureRecognizer();
+            tapGestureRecongnizer.Tapped += (sender, e) => {
+                Debug.WriteLine("taped once");
+                Debug.Print("Type of sender: " + sender.GetType().ToString());
+                Image img = sender as Image;
+                if (img != null)
+                    ChangeBackground(img);
+            };
+            tapGestureRecongnizer.NumberOfTapsRequired = 1;
+            imgGenerate.GestureRecognizers.Add(tapGestureRecongnizer);
         }
 
-        private static void ChangeBackground(Object view)
+        /// <summary>
+        /// Change the background color of an image with a
+        /// random color
+        /// </summary>
+        /// <param name="img">image target</param>
+        private static void ChangeBackground(Image img)
         {
-            // Change background color
+            Random r = new Random();
+            Color randomColor = new Color(r.NextDouble(), r.NextDouble(), r.NextDouble());
+            Debug.Print("Color: " + randomColor.ToString());
+
+            img.BackgroundColor = randomColor;
         }
     }
 }
