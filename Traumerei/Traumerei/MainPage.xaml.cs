@@ -39,9 +39,6 @@ namespace Traumerei
                 Debug.WriteLine("taped once");
                 Debug.Print("Type of sender: " + sender.GetType().ToString());
                 drawRandomImage();
-                //Image img = sender as Image;
-                //if (img != null)
-                //    ChangeBackground(img);
             };
             tapGestureRecongnizer.NumberOfTapsRequired = 1;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
