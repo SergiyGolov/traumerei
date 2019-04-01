@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,8 @@ namespace Traumerei.Algorithme
         private static ImageGenerator_Random instance = null;
         private static readonly float _delta = 0.001f;
         private Random _random;
+
+        private SKBitmap imgBitmap;
 
         public int Width { get; set; } = 100;
         public int Height { get; set; } = 100;
@@ -52,25 +55,30 @@ namespace Traumerei.Algorithme
         {
             Width = width;
             Height = height;
+            imgBitmap = new SKBitmap(Width, Height);
         }
 
-        public float[,,] Generate()
+        public SKBitmap Generate()
         {
-            float[,,] image = new float[Width, Height, 3];
+
+            SKColor color = new SKColor(0, 0, 0);
+
             for (int x = 0; x < Width; x++)
             {
                 for(int y = 0; y < Height; y++)
                 {
                     float[] RGBvalues = F(x, y);
-                    image[x, y, 0] = RGBvalues[0];
-                    image[x, y, 1] = RGBvalues[1];
-                    image[x, y, 2] = RGBvalues[2];
+                    imgBitmap.SetPixel(x, y, color
+                       .WithRed((byte)(RGBvalues[0] * 255))
+                       .WithGreen((byte)(RGBvalues[1] * 255))
+                       .WithBlue((byte)(RGBvalues[2] * 255))
+                   );
                 }
             }
-            return image;
+            return imgBitmap;
         }
 
-        public float[,,] Step()
+        public SKBitmap Step()
         {
             float[,,] image = new float[Width, Height, 3];
             for (int x = 0; x < Width; x++)
@@ -83,7 +91,7 @@ namespace Traumerei.Algorithme
                     image[x, y, 2] = RGBvalues[2];
                 }
             }
-            return image;
+            return imgBitmap;
         }
     }
 }

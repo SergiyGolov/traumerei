@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,18 +18,17 @@ namespace Traumerei.Algorithme
         /// Generate one image as a 3d float array.
         /// </summary>
         /// <returns>
-        /// Return a 3 dimensions float
-        /// array. First dimensions is Red values,
-        /// second dimension is Green values and third is
-        /// Blue values,
+        /// Returns a bitmap
         /// </returns>
-        float[,,] Generate();
+        SKBitmap Generate();
 
         /// <summary>
         /// Modify a little bit the previous generated image
         /// to allow animations.
         /// </summary>
-        /// <returns></returns>
-        float[,,] Step();
+        /// <returns>
+        /// Returns a bitmap
+        /// </returns>
+        SKBitmap Step();
     }
 }
