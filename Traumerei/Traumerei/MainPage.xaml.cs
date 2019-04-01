@@ -70,22 +70,22 @@ namespace Traumerei
                 generator.SetDimensions(width, height);
             }
 
-            float[,,] pixels = generator.Generate();
-
-            SKColor color = new SKColor(0,0,0);
+            imgBitmap = generator.Generate();
+            /*
+            SKColor color = new SKColor(0, 0, 0);
 
             for (int x = 0; x < width; x++)
             {
-                for(int y = 0; y < height;y++)
+                for (int y = 0; y < height; y++)
                 {
                     imgBitmap.SetPixel(x, y, color
-                        .WithRed((byte)(pixels[x, y, 0]*255))
-                        .WithGreen((byte)(pixels[x, y, 1]*255))
-                        .WithBlue((byte)(pixels[x, y, 2]*255))
+                        .WithRed((byte)(pixels[x, y, 0] * 255))
+                        .WithGreen((byte)(pixels[x, y, 1] * 255))
+                        .WithBlue((byte)(pixels[x, y, 2] * 255))
                     );
                 }
             }
-
+            */
             imgGenerated.InvalidateSurface();
         }
 
