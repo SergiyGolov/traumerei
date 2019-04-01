@@ -18,13 +18,13 @@ namespace Traumerei
         private SKBitmap imgBitmap;
         private int width;
         private int height;
-        private IImageGenerator generator;
+        private ImageGenerator_RandomFunctions generator;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
-            generator = ImageGenerator_Random.GetInstance();
+            generator = new ImageGenerator_RandomFunctions();
         }
 
         /// <summary>
@@ -69,10 +69,13 @@ namespace Traumerei
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                 height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
-                imgBitmap = new SKBitmap(width, height);
-                generator.SetDimensions(width, height);
+                int size = width;
+                if (width > height)
+                    size = height;
+                imgBitmap = new SKBitmap(size, size);
+                generator.SetDimensions(size, size);
             }
-
+            
             imgBitmap = generator.Generate();
             /*
             SKColor color = new SKColor(0, 0, 0);
