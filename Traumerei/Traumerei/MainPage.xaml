@@ -9,6 +9,7 @@
         <views:SKCanvasView x:Name="imgGenerated" PaintSurface="OnPainting"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="FillAndExpand" />
+        <ActivityIndicator x:Name="runningIndicator" Color="Blue" IsRunning="false" />
         <Button x:Name="btnSave"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"

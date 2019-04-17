@@ -19,12 +19,18 @@ namespace Traumerei
         private int width;
         private int height;
         private ImageGenerator_RandomFunctions generator;
+        private SKPaint textPaint;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
             generator = new ImageGenerator_RandomFunctions();
+            textPaint = new SKPaint
+            {
+                Style = SKPaintStyle.StrokeAndFill,
+                Color = SKColors.Black
+            };
         }
 
         /// <summary>
@@ -38,12 +44,14 @@ namespace Traumerei
             {
                 Debug.WriteLine("taped once");
                 Debug.Print("Type of sender: " + sender.GetType().ToString());
-                drawRandomImage();
+
+
+                drawRandomImageAsync();
                 //Image img = sender as Image;
                 //if (img != null)
                 //    ChangeBackground(img);
             };
-            tapGestureRecongnizer.NumberOfTapsRequired = 1;
+            tapGestureRecongnizer.NumberOfTapsRequired = 2;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
         }
 
@@ -59,12 +67,18 @@ namespace Traumerei
             Debug.Print("Color: " + randomColor.ToString());
 
             img.BackgroundColor = randomColor;
-
-
         }
 
-        private void drawRandomImage()
+        private async void drawRandomImageAsync()
         {
+            ActivityIndicator runningIndicator = FindByName("runningIndicator") as ActivityIndicator;
+
+
+
+            runningIndicator.IsRunning = true;
+            await Task.Yield();
+
+
             if (imgBitmap == null)
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
@@ -75,8 +89,10 @@ namespace Traumerei
                 imgBitmap = new SKBitmap(size, size);
                 generator.SetDimensions(size, size);
             }
-            
+
+
             imgBitmap = generator.Generate();
+            //runningIndicator.IsRunning = false;
             /*
             SKColor color = new SKColor(0, 0, 0);
 
@@ -93,6 +109,8 @@ namespace Traumerei
             }
             */
             imgGenerated.InvalidateSurface();
+
+            runningIndicator.IsRunning = false;
         }
 
         private void OnPainting(object sender, SKPaintSurfaceEventArgs args)
@@ -104,8 +122,15 @@ namespace Traumerei
             canvas.Clear();
 
             if (imgBitmap != null)
+            {
                 canvas.DrawBitmap(imgBitmap, 0, 0);
+            }
+            else
+            {
+                textPaint.TextSize = Math.Min(info.Width/14, info.Height/14);
 
+                canvas.DrawText("Double tap on me!", info.Width/4, info.Height/2,textPaint);
+            }
 
         }
     }
