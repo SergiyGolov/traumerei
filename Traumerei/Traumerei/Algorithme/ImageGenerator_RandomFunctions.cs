@@ -114,7 +114,7 @@ namespace Traumerei.Algorithme
             transformY = (y => (-y + Height / 2) / (Height / 2));
 
 
-            animationAnchor = true;
+            animationAnchor = false;
 
         }
 

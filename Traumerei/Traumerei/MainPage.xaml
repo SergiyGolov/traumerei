@@ -12,7 +12,7 @@
         <ActivityIndicator x:Name="runningIndicator" Color="Blue" IsRunning="false" />
 		<StackLayout Orientation="Horizontal"  HorizontalOptions="FillAndExpand">
 			<Label>Toggle animation anchor</Label>
-			<Switch IsToggled="True" Toggled="OnAnimationAnchorToggledEvent"></Switch>
+			<Switch IsToggled="False" Toggled="OnAnimationAnchorToggledEvent"></Switch>
 		</StackLayout>
 		<StackLayout Orientation="Horizontal"  HorizontalOptions="FillAndExpand">
 			<Label>Toggle animation</Label>
