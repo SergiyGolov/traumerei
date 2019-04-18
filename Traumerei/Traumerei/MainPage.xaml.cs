@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,13 +20,13 @@ namespace Traumerei
         private SKBitmap imgBitmap;
         private int width;
         private int height;
-        private IImageGenerator generator;
+        private ImageGenerator_RandomFunctions generator;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
-            generator = ImageGenerator_Random.GetInstance();
+            generator = new ImageGenerator_RandomFunctions();
         }
 
         /// <summary>
@@ -39,38 +40,68 @@ namespace Traumerei
             {
                 Debug.WriteLine("taped once");
                 Debug.Print("Type of sender: " + sender.GetType().ToString());
-                DrawRandomImage();
+
+                drawRandomImageAsync();
+                //Image img = sender as Image;
+                //if (img != null)
+                //    ChangeBackground(img);
             };
             tapGestureRecongnizer.NumberOfTapsRequired = 1;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
-
-            // Add on click to saveButton
-            btnSave.Clicked += (sender, e) =>
-            {
-                Console.WriteLine("has clicked button save");
-                Task<bool> task = SaveBitmapToGallery(imgBitmap);
-                Console.WriteLine("Has start the task. Wait for it to end");
-                task.Wait();
-                if (task.Result)
-                    Debug.WriteLine("The image has been saved successfully");
-                else
-                    Debug.WriteLine("The image hasn't been saved. Please, refer to the debug log.");
-            };
         }
 
-        private void DrawRandomImage()
+        /// <summary>
+        /// Change the background color of an image with a
+        /// random color
+        /// </summary>
+        /// <param name="img">image target</param>
+        private static void ChangeBackground(Image img)
         {
+            Random r = new Random();
+            Color randomColor = new Color(r.NextDouble(), r.NextDouble(), r.NextDouble());
+            Debug.Print("Color: " + randomColor.ToString());
+
+            img.BackgroundColor = randomColor;
+        }
+
+        private async void drawRandomImageAsync()
+        {
+            ActivityIndicator runningIndicator = FindByName("runningIndicator") as ActivityIndicator;
+
+            runningIndicator.IsRunning = true;
+            await Task.Yield();
+
             if (imgBitmap == null)
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                 height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
-                imgBitmap = new SKBitmap(width, height);
-                generator.SetDimensions(width, height);
+                int size = width;
+                if (width > height)
+                    size = height;
+                imgBitmap = new SKBitmap(size, size);
+                generator.SetDimensions(size, size);
             }
 
-            imgBitmap = generator.Generate();
 
+            imgBitmap = generator.Generate();
+            //runningIndicator.IsRunning = false;
+            /*
+            SKColor color = new SKColor(0, 0, 0);
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    imgBitmap.SetPixel(x, y, color
+                        .WithRed((byte)(pixels[x, y, 0] * 255))
+                        .WithGreen((byte)(pixels[x, y, 1] * 255))
+                        .WithBlue((byte)(pixels[x, y, 2] * 255))
+                    );
+                }
+            }
+            */
             imgGenerated.InvalidateSurface();
+
+            runningIndicator.IsRunning = false;
         }
 
         private void OnPainting(object sender, SKPaintSurfaceEventArgs args)
@@ -82,7 +113,20 @@ namespace Traumerei
             canvas.Clear();
 
             if (imgBitmap != null)
+            {
                 canvas.DrawBitmap(imgBitmap, 0, 0);
+            }
+            else
+            {
+                string resourceID = "Traumerei.ressources.tap.bmp";
+                Assembly assembly = GetType().GetTypeInfo().Assembly;
+
+                using (Stream stream = assembly.GetManifestResourceStream(resourceID))
+                {
+                    SKBitmap bitmap = SKBitmap.Decode(stream);
+                    canvas.DrawBitmap(bitmap, info.Width / 4, info.Height / 4);
+                }
+            }
         }
 
         private async Task<bool> SaveBitmapToGallery(SKBitmap bitmap)
