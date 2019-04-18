@@ -277,27 +277,37 @@ namespace Traumerei.Algorithme
 
         public new SKBitmap Step(float deltaX, float deltaY, float deltaZ)
         {
+
+            int local_RXoffset = (int)(deltaX * animationFactorR);
+            int local_RYoffset = (int)(deltaY * animationFactorR);
+
+            int local_GXoffset = (int)(deltaY * animationFactorG);
+            int local_GYoffset = (int)(deltaX * -1 * animationFactorG);
+
+            int local_BXoffset = (int)(deltaX * -1 * animationFactorB);
+            int local_BYoffset = (int)(deltaY * -1 * animationFactorB);
+
             if (!animationAnchor)
             {
-                RXoffset += (int)(deltaX * animationFactorR);
-                RYoffset += (int)(deltaY * animationFactorR);
+                RXoffset += local_RXoffset;
+                RYoffset += local_RYoffset;
 
-                GXoffset += (int)(deltaY * animationFactorG);
-                GYoffset += (int)(deltaZ * animationFactorG);
+                GXoffset += local_GXoffset;
+                GYoffset += local_GYoffset;
 
-                BXoffset += (int)(deltaZ * animationFactorB);
-                BYoffset += (int)(deltaX * animationFactorB);
+                BXoffset += local_BXoffset;
+                BYoffset += local_BYoffset;
             }
             else
             {
-                RXoffset = (int)(deltaX * animationFactorR);
-                RYoffset = (int)(deltaY * animationFactorR);
+                RXoffset = local_RXoffset;
+                RYoffset = local_RYoffset;
 
-                GXoffset = (int)(deltaY * animationFactorG);
-                GYoffset = (int)(deltaZ * animationFactorG);
+                GXoffset = local_GXoffset;
+                GYoffset = local_GYoffset;
 
-                BXoffset = (int)(deltaZ * animationFactorB);
-                BYoffset = (int)(deltaX * animationFactorB);
+                BXoffset = local_BXoffset;
+                BYoffset = local_BYoffset;
             }
 
 
