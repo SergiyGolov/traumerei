@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Traumerei.Algorithme;
@@ -19,18 +20,12 @@ namespace Traumerei
         private int width;
         private int height;
         private ImageGenerator_RandomFunctions generator;
-        private SKPaint textPaint;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
             generator = new ImageGenerator_RandomFunctions();
-            textPaint = new SKPaint
-            {
-                Style = SKPaintStyle.StrokeAndFill,
-                Color = SKColors.Black
-            };
         }
 
         /// <summary>
@@ -51,7 +46,7 @@ namespace Traumerei
                 //if (img != null)
                 //    ChangeBackground(img);
             };
-            tapGestureRecongnizer.NumberOfTapsRequired = 2;
+            tapGestureRecongnizer.NumberOfTapsRequired = 1;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
         }
 
@@ -127,11 +122,15 @@ namespace Traumerei
             }
             else
             {
-                textPaint.TextSize = Math.Min(info.Width/14, info.Height/14);
+                string resourceID = "Traumerei.ressources.tap.bmp";
+                Assembly assembly = GetType().GetTypeInfo().Assembly;
 
-                canvas.DrawText("Double tap on me!", info.Width/4, info.Height/2,textPaint);
+                using (Stream stream = assembly.GetManifestResourceStream(resourceID))
+                {
+                    SKBitmap bitmap = SKBitmap.Decode(stream);
+                    canvas.DrawBitmap(bitmap, info.Width/4, info.Height/4);
+                }
             }
-
         }
     }
 }
