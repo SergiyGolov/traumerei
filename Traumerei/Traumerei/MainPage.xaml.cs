@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Traumerei.Algorithme;
 using Xamarin.Forms;
@@ -38,29 +39,26 @@ namespace Traumerei
             {
                 Debug.WriteLine("taped once");
                 Debug.Print("Type of sender: " + sender.GetType().ToString());
-                drawRandomImage();
+                DrawRandomImage();
             };
             tapGestureRecongnizer.NumberOfTapsRequired = 1;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
+
+            // Add on click to saveButton
+            btnSave.Clicked += (sender, e) =>
+            {
+                Console.WriteLine("has clicked button save");
+                Task<bool> task = SaveBitmapToGallery(imgBitmap);
+                Console.WriteLine("Has start the task. Wait for it to end");
+                task.Wait();
+                if (task.Result)
+                    Debug.WriteLine("The image has been saved successfully");
+                else
+                    Debug.WriteLine("The image hasn't been saved. Please, refer to the debug log.");
+            };
         }
 
-        /// <summary>
-        /// Change the background color of an image with a
-        /// random color
-        /// </summary>
-        /// <param name="img">image target</param>
-        private static void ChangeBackground(Image img)
-        {
-            Random r = new Random();
-            Color randomColor = new Color(r.NextDouble(), r.NextDouble(), r.NextDouble());
-            Debug.Print("Color: " + randomColor.ToString());
-
-            img.BackgroundColor = randomColor;
-
-
-        }
-
-        private void drawRandomImage()
+        private void DrawRandomImage()
         {
             if (imgBitmap == null)
             {
@@ -71,21 +69,7 @@ namespace Traumerei
             }
 
             imgBitmap = generator.Generate();
-            /*
-            SKColor color = new SKColor(0, 0, 0);
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    imgBitmap.SetPixel(x, y, color
-                        .WithRed((byte)(pixels[x, y, 0] * 255))
-                        .WithGreen((byte)(pixels[x, y, 1] * 255))
-                        .WithBlue((byte)(pixels[x, y, 2] * 255))
-                    );
-                }
-            }
-            */
             imgGenerated.InvalidateSurface();
         }
 
@@ -99,8 +83,40 @@ namespace Traumerei
 
             if (imgBitmap != null)
                 canvas.DrawBitmap(imgBitmap, 0, 0);
+        }
 
+        private async Task<bool> SaveBitmapToGallery(SKBitmap bitmap)
+        {
+            // https://forums.xamarin.com/discussion/75958/using-skiasharp-how-to-save-a-skbitmap
+            // https://www.c-sharpcorner.com/article/local-file-storage-using-xamarin-form/
 
+            string directoryName = "Traumerei";
+
+            String localStorage = PCLStorage.FileSystem.Current.LocalStorage.Path;
+            String[] paths = { localStorage, directoryName };
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            try
+            {
+                var folder = new PCLStorage.FileSystemFolder(PCLStorage.PortablePath.Combine(paths));
+                var file = await folder.CreateFileAsync("testImage.png", PCLStorage.CreationCollisionOption.ReplaceExisting, token);
+                Console.WriteLine("has create folder and file");
+
+                using (Stream stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
+                {
+                    Console.WriteLine("Has open the file");
+                    SKData data = SKImage.FromBitmap(bitmap).Encode(SKEncodedImageFormat.Png, 100);
+                    Console.WriteLine("Has encode the data");
+                    data.SaveTo(stream);
+                    Console.WriteLine("Has write in the stream");
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine("ERROR: " + e);
+                return false;
+            }
+            return true;
         }
     }
 }

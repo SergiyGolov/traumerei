@@ -1,4 +1,5 @@
 ﻿using System;
+using Android.Content;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -7,6 +8,8 @@ namespace Traumerei
 {
     public partial class App : Application
     {
+        public static Context Instance { get; internal set; }
+
         public App()
         {
             InitializeComponent();

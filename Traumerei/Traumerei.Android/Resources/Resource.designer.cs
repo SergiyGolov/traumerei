@@ -26,6 +26,8 @@ namespace Traumerei.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::PCLStorage.Resource.String.ApplicationName = global::Traumerei.Droid.Resource.String.ApplicationName;
+			global::PCLStorage.Resource.String.Hello = global::Traumerei.Droid.Resource.String.Hello;
 			global::Xamarin.Essentials.Resource.Attribute.font = global::Traumerei.Droid.Resource.Attribute.font;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderAuthority = global::Traumerei.Droid.Resource.Attribute.fontProviderAuthority;
 			global::Xamarin.Essentials.Resource.Attribute.fontProviderCerts = global::Traumerei.Droid.Resource.Attribute.fontProviderCerts;
@@ -6111,6 +6113,12 @@ namespace Traumerei.Droid
 		
 		public partial class String
 		{
+			
+			// aapt resource value: 0x7f0b003d
+			public const int ApplicationName = 2131427389;
+			
+			// aapt resource value: 0x7f0b003c
+			public const int Hello = 2131427388;
 			
 			// aapt resource value: 0x7f0b0015
 			public const int abc_action_bar_home_description = 2131427349;
