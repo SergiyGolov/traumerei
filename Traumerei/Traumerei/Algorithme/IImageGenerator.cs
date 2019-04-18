@@ -29,6 +29,6 @@ namespace Traumerei.Algorithme
         /// <returns>
         /// Returns a bitmap
         /// </returns>
-        SKBitmap Step();
+        SKBitmap Step(float deltaX, float deltaY, float deltaZ);
     }
 }

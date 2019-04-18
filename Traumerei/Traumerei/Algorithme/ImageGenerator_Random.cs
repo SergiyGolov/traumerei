@@ -67,19 +67,8 @@ namespace Traumerei.Algorithme
             return imgBitmap;
         }
 
-        public SKBitmap Step()
+        public SKBitmap Step(float deltaX, float deltaY, float deltaZ)
         {
-            float[,,] image = new float[Width, Height, 3];
-            for (int x = 0; x < Width; x++)
-            {
-                for (int y = 0; y < Height; y++)
-                {
-                    float[] RGBvalues = F(x, y, _delta);
-                    image[x, y, 0] = RGBvalues[0];
-                    image[x, y, 1] = RGBvalues[1];
-                    image[x, y, 2] = RGBvalues[2];
-                }
-            }
             return imgBitmap;
         }
     }

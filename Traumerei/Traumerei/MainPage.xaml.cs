@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Traumerei.Algorithme;
 using Xamarin.Forms;
-
+using Xamarin.Essentials;
 
 namespace Traumerei
 {
@@ -20,12 +20,14 @@ namespace Traumerei
         private int width;
         private int height;
         private ImageGenerator_RandomFunctions generator;
+        private bool animation;
 
         public MainPage()
         {
             InitializeComponent();
             AddHandlers();
             generator = new ImageGenerator_RandomFunctions();
+            animation = true;
         }
 
         /// <summary>
@@ -37,17 +39,82 @@ namespace Traumerei
             var tapGestureRecongnizer = new TapGestureRecognizer();
             tapGestureRecongnizer.Tapped += (sender, e) =>
             {
-                Debug.WriteLine("taped once");
-                Debug.Print("Type of sender: " + sender.GetType().ToString());
-
-
                 drawRandomImageAsync();
-                //Image img = sender as Image;
-                //if (img != null)
-                //    ChangeBackground(img);
+
             };
             tapGestureRecongnizer.NumberOfTapsRequired = 1;
             imgGenerated.GestureRecognizers.Add(tapGestureRecongnizer);
+
+            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
+        }
+
+        private void startAccelerometer()
+        {
+            try
+            {
+                if (!Accelerometer.IsMonitoring)
+                    Accelerometer.Start(SensorSpeed.Game);
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Feature not supported on device
+            }
+            catch (Exception ex)
+            {
+                // Other error has occurred.
+            }
+        }
+
+        private void stopAccelerometer()
+        {
+            try
+            {
+                if (Accelerometer.IsMonitoring)
+                    Accelerometer.Stop();
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Feature not supported on device
+            }
+            catch (Exception ex)
+            {
+                // Other error has occurred.
+            }
+        }
+
+        public void OnAnimationToggledEvent(object sender, EventArgs args)
+        {
+            animation = !animation;
+            if (animation && imgBitmap != null)
+            {
+                startAccelerometer();
+            }
+            else
+            {
+                stopAccelerometer();
+            }
+        }
+
+        public void OnAnimationAnchorToggledEvent(object sender, EventArgs args)
+        {
+            generator.toggleAnimationAnchor();
+        }
+
+        // source: https://docs.microsoft.com/en-us/xamarin/essentials/accelerometer
+        private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
+        {
+
+            stopAccelerometer();
+
+            var data = e.Reading;
+
+            // Process Acceleration X, Y, and Z
+            imgBitmap = generator.Step(data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z);
+
+            imgGenerated.InvalidateSurface();
+
+            startAccelerometer();
+
         }
 
         /// <summary>
@@ -66,9 +133,11 @@ namespace Traumerei
 
         private async void drawRandomImageAsync()
         {
+
+            stopAccelerometer();
+
+
             ActivityIndicator runningIndicator = FindByName("runningIndicator") as ActivityIndicator;
-
-
 
             runningIndicator.IsRunning = true;
             await Task.Yield();
@@ -87,25 +156,12 @@ namespace Traumerei
 
 
             imgBitmap = generator.Generate();
-            //runningIndicator.IsRunning = false;
-            /*
-            SKColor color = new SKColor(0, 0, 0);
 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    imgBitmap.SetPixel(x, y, color
-                        .WithRed((byte)(pixels[x, y, 0] * 255))
-                        .WithGreen((byte)(pixels[x, y, 1] * 255))
-                        .WithBlue((byte)(pixels[x, y, 2] * 255))
-                    );
-                }
-            }
-            */
             imgGenerated.InvalidateSurface();
 
             runningIndicator.IsRunning = false;
+
+            startAccelerometer();
         }
 
         private void OnPainting(object sender, SKPaintSurfaceEventArgs args)
@@ -128,7 +184,7 @@ namespace Traumerei
                 using (Stream stream = assembly.GetManifestResourceStream(resourceID))
                 {
                     SKBitmap bitmap = SKBitmap.Decode(stream);
-                    canvas.DrawBitmap(bitmap, info.Width/4, info.Height/4);
+                    canvas.DrawBitmap(bitmap, info.Width / 4, info.Height / 4);
                 }
             }
         }

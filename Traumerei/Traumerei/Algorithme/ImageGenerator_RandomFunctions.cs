@@ -33,6 +33,23 @@ namespace Traumerei.Algorithme
 
         enum Combination { ReplaceX, ReplaceY, Imbricate };
 
+        private double[] RValues;
+        private double[] GValues;
+        private double[] BValues;
+
+        private float animationFactorR;
+        private float animationFactorG;
+        private float animationFactorB;
+
+        private int RXoffset;
+        private int RYoffset;
+        private int GXoffset;
+        private int GYoffset;
+        private int BXoffset;
+        private int BYoffset;
+
+        private bool animationAnchor;
+
         public ImageGenerator_RandomFunctions() : base()
         {
 
@@ -96,6 +113,9 @@ namespace Traumerei.Algorithme
             transformX = (x => (x - Width / 2) / (Width / 2));
             transformY = (y => (-y + Height / 2) / (Height / 2));
 
+
+            animationAnchor = true;
+
         }
 
         private double applyFuncsFromList(double x, double y,
@@ -129,6 +149,16 @@ namespace Traumerei.Algorithme
             return z;
         }
 
+        public new void SetDimensions(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            imgBitmap = new SKBitmap(Width, Height);
+            RValues = new double[width * height];
+            GValues = new double[width * height];
+            BValues = new double[width * height];
+        }
+
         //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/pixel-bits
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         uint MakePixel(byte red, byte green, byte blue, byte alpha) =>
@@ -148,7 +178,18 @@ namespace Traumerei.Algorithme
             combinationListG.Clear();
             combinationListB.Clear();
 
+            RXoffset = 0;
+            RYoffset = 0;
+            GXoffset = 0;
+            GYoffset = 0;
+            BXoffset = 0;
+            BYoffset = 0;
+
             _random = new Random();
+
+            animationFactorR = 10 + _random.Next(40);
+            animationFactorG = 10 + _random.Next(40);
+            animationFactorB = 10 + _random.Next(40);
 
             Array combinationValues = Enum.GetValues(typeof(Combination));
 
@@ -179,7 +220,6 @@ namespace Traumerei.Algorithme
                 combinationListB.Add((Combination)combinationValues.GetValue(_random.Next(combinationValues.Length)));
             }
 
-            SKColor color = new SKColor(0, 0, 0);
             int threadNb = Environment.ProcessorCount;
             Thread[] threads = new Thread[threadNb];
 
@@ -193,7 +233,6 @@ namespace Traumerei.Algorithme
                     int s = (int)i;
                     int wh = Width * Height;
 
-                    double[] RGBvalues = { 0, 0, 0 };
                     unsafe
                     {
                         uint* ptr = (uint*)pixelsAddr.ToPointer();
@@ -205,11 +244,11 @@ namespace Traumerei.Algorithme
                             int y = (s / Width);
                             int x = s - (y * Width);
 
-                            RGBvalues[0] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
-                            RGBvalues[1] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
-                            RGBvalues[2] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
+                            RValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
+                            GValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
+                            BValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
 
-                            *ptr = MakePixel((byte)RGBvalues[0], (byte)RGBvalues[1], (byte)RGBvalues[2], 0xFF);
+                            *ptr = MakePixel((byte)RValues[s], (byte)GValues[s], (byte)BValues[s], 0xFF);
 
                             s += threadNb;
                             ptr += threadNb;
@@ -224,22 +263,95 @@ namespace Traumerei.Algorithme
                 threads[threadId].Join();
             }
 
-            //double[] RGBvalues = { 0, 0, 0 };
-            //
-            //for (int x = 0; x < Width; x++)
-            //{
-            //    for (int y = 0; y < Height; y++)
-            //    {
-            //        RGBvalues[0] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
-            //        RGBvalues[1] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
-            //        RGBvalues[2] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
-            //        imgBitmap.SetPixel(x, y, color
-            //           .WithRed((byte)(RGBvalues[0] * 255))
-            //           .WithGreen((byte)(RGBvalues[1] * 255))
-            //           .WithBlue((byte)(RGBvalues[2] * 255))
-            //       );
-            //    }
-            //}
+            return imgBitmap;
+        }
+
+
+        public void toggleAnimationAnchor()
+        {
+            animationAnchor = !animationAnchor;
+        }
+
+        //source: https://stackoverflow.com/questions/1082917/mod-of-negative-number-is-melting-my-brain/1082938
+        int mod(int k, int n) { return ((k %= n) < 0) ? k + n : k; }
+
+        public new SKBitmap Step(float deltaX, float deltaY, float deltaZ)
+        {
+            if (!animationAnchor)
+            {
+                RXoffset += (int)(deltaX * animationFactorR);
+                RYoffset += (int)(deltaY * animationFactorR);
+
+                GXoffset += (int)(deltaY * animationFactorG);
+                GYoffset += (int)(deltaZ * animationFactorG);
+
+                BXoffset += (int)(deltaZ * animationFactorB);
+                BYoffset += (int)(deltaX * animationFactorB);
+            }
+            else
+            {
+                RXoffset = (int)(deltaX * animationFactorR);
+                RYoffset = (int)(deltaY * animationFactorR);
+
+                GXoffset = (int)(deltaY * animationFactorG);
+                GYoffset = (int)(deltaZ * animationFactorG);
+
+                BXoffset = (int)(deltaZ * animationFactorB);
+                BYoffset = (int)(deltaX * animationFactorB);
+            }
+
+
+            int threadNb = Environment.ProcessorCount;
+            Thread[] threads = new Thread[threadNb];
+
+            IntPtr pixelsAddr = imgBitmap.GetPixels();
+
+            for (int threadId = 0; threadId < threadNb; threadId++)
+            {
+                threads[threadId] = new Thread((i) =>
+                {
+                    int s = (int)i;
+                    int wh = Width * Height;
+
+                    unsafe
+                    {
+                        uint* ptr = (uint*)pixelsAddr.ToPointer();
+
+                        ptr += s;
+
+                        while (s < wh)
+                        {
+                            int y = (s / Width);
+                            int x = s - (y * Width);
+
+                            int yR = mod((y + RYoffset), Height);
+                            int xR = mod((x + RXoffset), Width);
+
+                            int yG = mod((y + GYoffset), Height);
+                            int xG = mod((x + GXoffset), Width);
+
+                            int yB = mod((y + BYoffset), Height);
+                            int xB = mod((x + BXoffset), Width);
+
+                            int indexR = xR + yR * Width;
+                            int indexG = xG + yG * Width;
+                            int indexB = xB + yB * Width;
+
+                            *ptr = MakePixel((byte)RValues[indexR], (byte)GValues[indexG], (byte)BValues[indexB], 0xFF);
+
+                            s += threadNb;
+                            ptr += threadNb;
+                        }
+                    }
+                });
+                threads[threadId].Start(threadId);
+            }
+
+            for (int threadId = 0; threadId < threadNb; threadId++)
+            {
+                threads[threadId].Join();
+            }
+
             return imgBitmap;
         }
     }
