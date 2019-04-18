@@ -193,9 +193,9 @@ namespace Traumerei.Algorithme
 
             Array combinationValues = Enum.GetValues(typeof(Combination));
 
-            maxDepth = _random.Next(3) + 2;
+            maxDepth = _random.Next(5) + 3;
 
-            for (int i = 0; i < _random.Next(maxDepth) + 2; i++)
+            for (int i = 0; i < _random.Next(maxDepth) + 3; i++)
             {
                 funcListR.Add(avalaibleFuncs[_random.Next(avalaibleFuncs.Count)]);
                 atomicFuncListR.Add(avalaibleAtomicFuncs[_random.Next(avalaibleAtomicFuncs.Count)]);
@@ -204,7 +204,7 @@ namespace Traumerei.Algorithme
 
             maxDepth = _random.Next(5) + 3;
 
-            for (int i = 0; i < _random.Next(maxDepth) + 2; i++)
+            for (int i = 0; i < _random.Next(maxDepth) + 3; i++)
             {
                 funcListG.Add(avalaibleFuncs[_random.Next(avalaibleFuncs.Count)]);
                 atomicFuncListG.Add(avalaibleAtomicFuncs[_random.Next(avalaibleAtomicFuncs.Count)]);
@@ -213,7 +213,7 @@ namespace Traumerei.Algorithme
 
             maxDepth = _random.Next(5) + 3;
 
-            for (int i = 0; i < _random.Next(maxDepth) + 2; i++)
+            for (int i = 0; i < _random.Next(maxDepth) + 3; i++)
             {
                 funcListB.Add(avalaibleFuncs[_random.Next(avalaibleFuncs.Count)]);
                 atomicFuncListB.Add(avalaibleAtomicFuncs[_random.Next(avalaibleAtomicFuncs.Count)]);
