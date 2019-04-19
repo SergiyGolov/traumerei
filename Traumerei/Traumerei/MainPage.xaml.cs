@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Traumerei.Algorithme;
 using Xamarin.Forms;
 using Xamarin.Essentials;
+using Traumerei.SaveImage;
 
 namespace Traumerei
 {
@@ -185,6 +186,42 @@ namespace Traumerei
                 {
                     SKBitmap bitmap = SKBitmap.Decode(stream);
                     canvas.DrawBitmap(bitmap, info.Width / 4, info.Height / 4);
+                }
+            }
+        }
+
+        //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/saving
+        async void saveImage(object sender, EventArgs args)
+        {
+            if (imgBitmap != null)
+            {
+                using (SKImage image = SKImage.FromBitmap(imgBitmap))
+                {
+                    try
+                    {
+                        SKData data = image.Encode();
+                        IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
+                        if (photoLibrary == null)
+                        {
+                            Console.WriteLine("SAVEIMAGE: photoLibrary null!");
+                            return;
+                        }
+
+                        bool result = await photoLibrary.SavePhotoAsync(data.ToArray(), "Traumerei", Convert.ToString(Guid.NewGuid()));
+
+                        if (!result)        // The image is not saving on result and it displays the alert
+                        {
+                            Console.WriteLine("SAVEIMAGE: SavePhotoAsync return false");
+                        }
+                        else
+                        {
+                            Console.WriteLine("SAVEIMAGE: Success!");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string err = ex.InnerException.ToString();
+                    }
                 }
             }
         }

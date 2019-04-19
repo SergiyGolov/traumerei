@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Traumerei.SaveImage
+{
+
+    //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/saving
+    public interface IPhotoLibrary
+    {
+
+
+        Task<bool> SavePhotoAsync(byte[] data, string folder, string filename);
+    }
+}
