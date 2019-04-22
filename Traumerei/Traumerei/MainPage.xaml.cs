@@ -239,6 +239,13 @@ namespace Traumerei
                 }
             }
         }
+
+        //source: https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
+        bool IsPowerOfTwo(int x)
+        {
+            return (x != 0) && ((x & (x - 1)) == 0);
+        }
+
         async void loadImage(object sender, EventArgs args)
         {
             IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
@@ -248,7 +255,7 @@ namespace Traumerei
                 if (stream != null)
                 {
                     SKBitmap loaded = SKBitmap.Decode(stream);
-                    if (loaded != null && loaded.Width % 2 == 0 && loaded.Height % 2 == 0)
+                    if (loaded != null && IsPowerOfTwo(loaded.Width) && IsPowerOfTwo(loaded.Height) && loaded.Width==loaded.Height)
                     {
                         if(animation)
                             stopAccelerometer();
