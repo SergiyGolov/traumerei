@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.IO;
 
 using Android.App;
 using Android.Runtime;
@@ -7,6 +9,7 @@ using Android.Widget;
 using Android.OS;
 using Plugin.Permissions;
 using Android.Content.PM;
+using Android.Content;
 
 namespace Traumerei.Droid
 {
@@ -38,6 +41,34 @@ namespace Traumerei.Droid
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+
+        //source: https://github.com/xamarin/xamarin-forms-samples/blob/master/SkiaSharpForms/Demos/Demos/SkiaSharpFormsDemos.Droid/MainActivity.cs
+        // Field, property, and method for Picture Picker
+        public static readonly int PickImageId = 1000;
+
+        public TaskCompletionSource<Stream> PickImageTaskCompletionSource { set; get; }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent intent)
+        {
+            base.OnActivityResult(requestCode, resultCode, intent);
+
+            if (requestCode == PickImageId)
+            {
+                if ((resultCode == Result.Ok) && (intent != null))
+                {
+                    Android.Net.Uri uri = intent.Data;
+                    Stream stream = ContentResolver.OpenInputStream(uri);
+
+                    // Set the Stream as the completion of the Task
+                    PickImageTaskCompletionSource.SetResult(stream);
+                }
+                else
+                {
+                    PickImageTaskCompletionSource.SetResult(null);
+                }
+            }
         }
     }
 

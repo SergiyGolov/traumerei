@@ -16,6 +16,52 @@ namespace Traumerei.SaveImage
     public class AndroidPhotoLibrary : IPhotoLibrary
     {
 
+        //source: https://github.com/xamarin/xamarin-forms-samples/blob/master/SkiaSharpForms/Demos/Demos/SkiaSharpFormsDemos.Droid/PhotoLibrary.cs
+        public async Task<System.IO.Stream> PickPhotoAsync()
+        {
+            try
+            {
+                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
+                if (status != PermissionStatus.Granted)
+                {
+
+                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Storage);
+                    //Best practice to always check that the key exists
+                    if (results.ContainsKey(Permission.Storage))
+                        status = results[Permission.Storage];
+                }
+
+                if (status == PermissionStatus.Granted)
+                {
+
+                    // Define the Intent for getting images
+                    Intent intent = new Intent();
+                    intent.SetType("image/*");
+                    intent.SetAction(Intent.ActionGetContent);
+
+                    // Start the picture-picker activity (resumes in MainActivity.cs)
+                    MainActivity.Instance.StartActivityForResult(
+                        Intent.CreateChooser(intent, "Select Picture"),
+                        MainActivity.PickImageId);
+
+                    // Save the TaskCompletionSource object as a MainActivity property
+                    MainActivity.Instance.PickImageTaskCompletionSource = new TaskCompletionSource<System.IO.Stream>();
+
+                    // Return Task object
+                    return await MainActivity.Instance.PickImageTaskCompletionSource.Task;
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Permission Error: " + ex);
+
+            }
+            return null;
+        }
+
         public async Task<bool> SavePhotoAsync(byte[] data, string folder, string filename)
         {
 

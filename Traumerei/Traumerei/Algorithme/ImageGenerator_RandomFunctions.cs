@@ -192,9 +192,9 @@ namespace Traumerei.Algorithme
 
             _random = new Random();
 
-            animationFactorR = 10 + _random.Next(40);
-            animationFactorG = 10 + _random.Next(40);
-            animationFactorB = 10 + _random.Next(40);
+            animationFactorR = 5 + _random.Next(15);
+            animationFactorG = 5 + _random.Next(15);
+            animationFactorB = 5 + _random.Next(15);
 
             Array combinationValues = Enum.GetValues(typeof(Combination));
 
@@ -338,7 +338,7 @@ namespace Traumerei.Algorithme
                             int x = s - (y * Width);
 
                             //source for bitwise and modulo trick: https://jacksondunstan.com/articles/1946
-                            int yR = (y + RYoffset)& sizeBinaryTimes;
+                            int yR = (y + RYoffset) & sizeBinaryTimes;
                             int xR = (x + RXoffset) & sizeBinaryTimes;
 
                             int yG = (y + GYoffset) & sizeBinaryTimes;
@@ -367,6 +367,53 @@ namespace Traumerei.Algorithme
             }
 
             return imgBitmap;
+        }
+
+        public void load(SKBitmap loaded)
+        {
+            imgBitmap = loaded;
+            SKColor[] pixels = loaded.Pixels;
+
+            int threadNb = Environment.ProcessorCount;
+            Thread[] threads = new Thread[threadNb];
+           
+            for (int threadId = 0; threadId < threadNb; threadId++)
+            {
+                threads[threadId] = new Thread((i) =>
+                {
+                    int s = (int)i;
+                    int wh = Width * Height;
+
+                    while (s < wh)
+                    {
+                        RValues[s] = pixels[s].Red;
+                        GValues[s] = pixels[s].Green;
+                        BValues[s] = pixels[s].Blue;
+
+                        s += threadNb;
+                    }
+                });
+                threads[threadId].Start(threadId);
+            }
+
+            for (int threadId = 0; threadId < threadNb; threadId++)
+            {
+                threads[threadId].Join();
+            }
+
+            RXoffset = 0;
+            RYoffset = 0;
+            GXoffset = 0;
+            GYoffset = 0;
+            BXoffset = 0;
+            BYoffset = 0;
+
+            _random = new Random();
+
+            animationFactorR = 5 + _random.Next(15);
+            animationFactorG = 5 + _random.Next(15);
+            animationFactorB = 5 + _random.Next(15);
+
         }
     }
 }

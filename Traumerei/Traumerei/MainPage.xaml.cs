@@ -111,7 +111,8 @@ namespace Traumerei
             var data = e.Reading;
 
             // Process Acceleration X, Y, and Z
-            imgBitmap = generator.Step(data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z);
+            if(animation)
+                imgBitmap = generator.Step(data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z);
 
             imgGenerated.InvalidateSurface();
 
@@ -153,8 +154,8 @@ namespace Traumerei
                 if (width > height)
                     oldSize = height;
 
-                int size= oldSize;
-                for(int i = 1; i < oldSize; i <<= 1)
+                int size = oldSize;
+                for (int i = 1; i < oldSize; i <<= 1)
                 {
                     size = i;
                 }
@@ -162,9 +163,10 @@ namespace Traumerei
                 width = size;
                 height = size;
 
-                imgBitmap = new SKBitmap(size, size);
+
                 generator.SetDimensions(size, size);
                 skRect = new SKRect(0, 0, oldSize, oldSize);
+                imgBitmap = new SKBitmap(width, height);
             }
 
 
@@ -187,7 +189,7 @@ namespace Traumerei
 
             if (imgBitmap != null)
             {
-                canvas.DrawBitmap(imgBitmap,skRect);
+                canvas.DrawBitmap(imgBitmap, skRect);
             }
             else
             {
@@ -221,7 +223,7 @@ namespace Traumerei
 
                         bool result = await photoLibrary.SavePhotoAsync(data.ToArray(), "Traumerei", Convert.ToString(Guid.NewGuid()));
 
-                        if (!result)        // The image is not saving on result and it displays the alert
+                        if (!result)
                         {
                             Console.WriteLine("SAVEIMAGE: SavePhotoAsync return false");
                         }
@@ -233,6 +235,38 @@ namespace Traumerei
                     catch (Exception ex)
                     {
                         string err = ex.InnerException.ToString();
+                    }
+                }
+            }
+        }
+        async void loadImage(object sender, EventArgs args)
+        {
+            IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
+
+            using (Stream stream = await photoLibrary.PickPhotoAsync())
+            {
+                if (stream != null)
+                {
+                    SKBitmap loaded = SKBitmap.Decode(stream);
+                    if (loaded != null && loaded.Width % 2 == 0 && loaded.Height % 2 == 0)
+                    {
+                        if(animation)
+                            stopAccelerometer();
+
+                        imgBitmap = loaded;
+
+                        generator.SetDimensions(loaded.Width, loaded.Height);
+
+                        width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
+                        height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
+
+                        skRect = new SKRect(0, 0, width, height);
+
+                        generator.load(loaded);
+                        imgGenerated.InvalidateSurface();
+
+                        if (animation)
+                            startAccelerometer();
                     }
                 }
             }

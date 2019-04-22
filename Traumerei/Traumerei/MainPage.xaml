@@ -18,6 +18,11 @@
             <Label>Toggle animation</Label>
             <Switch IsToggled="True" Toggled="OnAnimationToggledEvent"></Switch>
         </StackLayout>
+        <Button x:Name="btnLoad"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="Center"
+            Text="Load" 
+            Clicked="loadImage" />
         <Button x:Name="btnSave"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"

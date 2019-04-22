@@ -11,7 +11,7 @@ namespace Traumerei.SaveImage
     public interface IPhotoLibrary
     {
 
-
+        Task<Stream> PickPhotoAsync();
         Task<bool> SavePhotoAsync(byte[] data, string folder, string filename);
     }
 }
