@@ -22,6 +22,7 @@ namespace Traumerei
         private int height;
         private ImageGenerator_RandomFunctions generator;
         private bool animation;
+        private SKRect skRect;
 
         public MainPage()
         {
@@ -148,11 +149,22 @@ namespace Traumerei
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                 height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
-                int size = width;
+                int oldSize = width;
                 if (width > height)
-                    size = height;
+                    oldSize = height;
+
+                int size= oldSize;
+                for(int i = 1; i < oldSize; i <<= 1)
+                {
+                    size = i;
+                }
+
+                width = size;
+                height = size;
+
                 imgBitmap = new SKBitmap(size, size);
                 generator.SetDimensions(size, size);
+                skRect = new SKRect(0, 0, oldSize, oldSize);
             }
 
 
@@ -175,7 +187,7 @@ namespace Traumerei
 
             if (imgBitmap != null)
             {
-                canvas.DrawBitmap(imgBitmap, 0, 0);
+                canvas.DrawBitmap(imgBitmap,skRect);
             }
             else
             {

@@ -48,6 +48,8 @@ namespace Traumerei.Algorithme
         private int BXoffset;
         private int BYoffset;
 
+        private int sizeBinaryTimes;
+
         private bool animationAnchor;
 
         public ImageGenerator_RandomFunctions() : base()
@@ -157,6 +159,9 @@ namespace Traumerei.Algorithme
             RValues = new double[width * height];
             GValues = new double[width * height];
             BValues = new double[width * height];
+
+            sizeBinaryTimes = width - 1;
+
         }
 
         //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/pixel-bits
@@ -272,8 +277,6 @@ namespace Traumerei.Algorithme
             animationAnchor = !animationAnchor;
         }
 
-        //source: https://stackoverflow.com/questions/1082917/mod-of-negative-number-is-melting-my-brain/1082938
-        int mod(int k, int n) { return ((k %= n) < 0) ? k + n : k; }
 
         public new SKBitmap Step(float deltaX, float deltaY, float deltaZ)
         {
@@ -334,14 +337,15 @@ namespace Traumerei.Algorithme
                             int y = (s / Width);
                             int x = s - (y * Width);
 
-                            int yR = mod((y + RYoffset), Height);
-                            int xR = mod((x + RXoffset), Width);
+                            //source for bitwise and modulo trick: https://jacksondunstan.com/articles/1946
+                            int yR = (y + RYoffset)& sizeBinaryTimes;
+                            int xR = (x + RXoffset) & sizeBinaryTimes;
 
-                            int yG = mod((y + GYoffset), Height);
-                            int xG = mod((x + GXoffset), Width);
+                            int yG = (y + GYoffset) & sizeBinaryTimes;
+                            int xG = (x + GXoffset) & sizeBinaryTimes;
 
-                            int yB = mod((y + BYoffset), Height);
-                            int xB = mod((x + BXoffset), Width);
+                            int yB = (y + BYoffset) & sizeBinaryTimes;
+                            int xB = (x + BXoffset) & sizeBinaryTimes;
 
                             int indexR = xR + yR * Width;
                             int indexG = xG + yG * Width;
