@@ -240,12 +240,6 @@ namespace Traumerei
             }
         }
 
-        //source: https://stackoverflow.com/questions/600293/how-to-check-if-a-number-is-a-power-of-2
-        bool IsPowerOfTwo(int x)
-        {
-            return (x != 0) && ((x & (x - 1)) == 0);
-        }
-
         async void loadImage(object sender, EventArgs args)
         {
             IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
@@ -255,21 +249,42 @@ namespace Traumerei
                 if (stream != null)
                 {
                     SKBitmap loaded = SKBitmap.Decode(stream);
-                    if (loaded != null && IsPowerOfTwo(loaded.Width) && IsPowerOfTwo(loaded.Height) && loaded.Width==loaded.Height)
+                    if (loaded != null)
                     {
                         if(animation)
                             stopAccelerometer();
 
-                        imgBitmap = loaded;
-
-                        generator.SetDimensions(loaded.Width, loaded.Height);
-
                         width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                         height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
 
-                        skRect = new SKRect(0, 0, width, height);
+                        int oldSize = width;
+                        if (width > height)
+                            oldSize = height;
 
-                        generator.load(loaded);
+                        int size = oldSize;
+                        for (int i = 1; i < oldSize; i <<= 1)
+                        {
+                            size = i;
+                        }
+
+                        width = size;
+                        height = size;
+
+                        generator.SetDimensions(width, height);
+
+
+                        //source: https://stackoverflow.com/questions/48422724/fastest-way-to-scale-an-skimage-skiasharp
+                        SKImageInfo info = new SKImageInfo(width, height, SKColorType.Rgba8888);
+
+                        SKImage output = SKImage.Create(info);
+
+                        loaded.ScalePixels(output.PeekPixels(), SKFilterQuality.None);
+
+                        imgBitmap = SKBitmap.FromImage(output);
+
+                        skRect = new SKRect(0, 0, oldSize, oldSize);
+
+                        generator.load(imgBitmap);
                         imgGenerated.InvalidateSurface();
 
                         if (animation)
