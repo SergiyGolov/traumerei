@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Traumerei.Algorithme;
 using Xamarin.Forms;
@@ -142,7 +143,6 @@ namespace Traumerei
             runningIndicator.IsRunning = true;
             await Task.Yield();
 
-
             if (imgBitmap == null)
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
@@ -156,7 +156,6 @@ namespace Traumerei
 
 
             imgBitmap = generator.Generate();
-
             imgGenerated.InvalidateSurface();
 
             runningIndicator.IsRunning = false;
@@ -187,6 +186,40 @@ namespace Traumerei
                     canvas.DrawBitmap(bitmap, info.Width / 4, info.Height / 4);
                 }
             }
+        }
+
+        private async Task<bool> SaveBitmapToGallery(SKBitmap bitmap)
+        {
+            // https://forums.xamarin.com/discussion/75958/using-skiasharp-how-to-save-a-skbitmap
+            // https://www.c-sharpcorner.com/article/local-file-storage-using-xamarin-form/
+
+            string directoryName = "Traumerei";
+
+            String localStorage = PCLStorage.FileSystem.Current.LocalStorage.Path;
+            String[] paths = { localStorage, directoryName };
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            try
+            {
+                var folder = new PCLStorage.FileSystemFolder(PCLStorage.PortablePath.Combine(paths));
+                var file = await folder.CreateFileAsync("testImage.png", PCLStorage.CreationCollisionOption.ReplaceExisting, token);
+                Console.WriteLine("has create folder and file");
+
+                using (Stream stream = await file.OpenAsync(PCLStorage.FileAccess.ReadAndWrite))
+                {
+                    Console.WriteLine("Has open the file");
+                    SKData data = SKImage.FromBitmap(bitmap).Encode(SKEncodedImageFormat.Png, 100);
+                    Console.WriteLine("Has encode the data");
+                    data.SaveTo(stream);
+                    Console.WriteLine("Has write in the stream");
+                }
+            } catch (Exception e)
+            {
+                Console.WriteLine("ERROR: " + e);
+                return false;
+            }
+            return true;
         }
     }
 }
