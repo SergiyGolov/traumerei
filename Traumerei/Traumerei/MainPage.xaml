@@ -22,7 +22,7 @@
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"
             Text="Load" 
-            Clicked="loadImage" />
+            Clicked="LoadImage" />
         <Button x:Name="btnSave"
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"
