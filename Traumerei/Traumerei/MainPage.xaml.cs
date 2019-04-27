@@ -1,12 +1,9 @@
 ﻿using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Traumerei.Algorithme;
 using Xamarin.Forms;
@@ -41,7 +38,7 @@ namespace Traumerei
             var tapGestureRecongnizer = new TapGestureRecognizer();
             tapGestureRecongnizer.Tapped += (sender, e) =>
             {
-                drawRandomImageAsync();
+                DrawRandomImageAsync();
 
             };
             tapGestureRecongnizer.NumberOfTapsRequired = 1;
@@ -50,35 +47,35 @@ namespace Traumerei
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
-        private void startAccelerometer()
+        private void StartAccelerometer()
         {
             try
             {
                 if (!Accelerometer.IsMonitoring)
                     Accelerometer.Start(SensorSpeed.Game);
             }
-            catch (FeatureNotSupportedException fnsEx)
+            catch (FeatureNotSupportedException)
             {
                 // Feature not supported on device
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Other error has occurred.
             }
         }
 
-        private void stopAccelerometer()
+        private void StopAccelerometer()
         {
             try
             {
                 if (Accelerometer.IsMonitoring)
                     Accelerometer.Stop();
             }
-            catch (FeatureNotSupportedException fnsEx)
+            catch (FeatureNotSupportedException)
             {
                 // Feature not supported on device
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Other error has occurred.
             }
@@ -89,24 +86,24 @@ namespace Traumerei
             animation = !animation;
             if (animation && imgBitmap != null)
             {
-                startAccelerometer();
+                StartAccelerometer();
             }
             else
             {
-                stopAccelerometer();
+                StopAccelerometer();
             }
         }
 
         public void OnAnimationAnchorToggledEvent(object sender, EventArgs args)
         {
-            generator.toggleAnimationAnchor();
+            generator.ToggleAnimationAnchor();
         }
 
         // source: https://docs.microsoft.com/en-us/xamarin/essentials/accelerometer
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
 
-            stopAccelerometer();
+            StopAccelerometer();
 
             var data = e.Reading;
 
@@ -116,7 +113,7 @@ namespace Traumerei
 
             imgGenerated.InvalidateSurface();
 
-            startAccelerometer();
+            StartAccelerometer();
 
         }
 
@@ -134,10 +131,10 @@ namespace Traumerei
             img.BackgroundColor = randomColor;
         }
 
-        private async void drawRandomImageAsync()
+        private async void DrawRandomImageAsync()
         {
 
-            stopAccelerometer();
+            StopAccelerometer();
 
 
             ActivityIndicator runningIndicator = FindByName("runningIndicator") as ActivityIndicator;
@@ -176,7 +173,7 @@ namespace Traumerei
 
             runningIndicator.IsRunning = false;
 
-            startAccelerometer();
+            StartAccelerometer();
         }
 
         private void OnPainting(object sender, SKPaintSurfaceEventArgs args)
@@ -240,7 +237,7 @@ namespace Traumerei
             }
         }
 
-        async void loadImage(object sender, EventArgs args)
+        async void LoadImage(object sender, EventArgs args)
         {
             IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
 
@@ -252,7 +249,7 @@ namespace Traumerei
                     if (loaded != null)
                     {
                         if(animation)
-                            stopAccelerometer();
+                            StopAccelerometer();
 
                         width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                         height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
@@ -284,11 +281,11 @@ namespace Traumerei
 
                         skRect = new SKRect(0, 0, oldSize, oldSize);
 
-                        generator.load(imgBitmap);
+                        generator.Load(imgBitmap);
                         imgGenerated.InvalidateSurface();
 
                         if (animation)
-                            startAccelerometer();
+                            StartAccelerometer();
                     }
                 }
             }

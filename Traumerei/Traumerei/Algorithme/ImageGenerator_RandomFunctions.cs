@@ -1,11 +1,8 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Traumerei.Algorithme
 {
@@ -120,7 +117,7 @@ namespace Traumerei.Algorithme
 
         }
 
-        private double applyFuncsFromList(double x, double y,
+        private double ApplyFuncsFromList(double x, double y,
             List<Func<double, double, double>> atomicFuncList,
             List<Func<Func<double, double, double>, double, double, double>> funcList,
             List<Combination> combList)
@@ -249,9 +246,9 @@ namespace Traumerei.Algorithme
                             int y = (s / Width);
                             int x = s - (y * Width);
 
-                            RValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
-                            GValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
-                            BValues[s] = Width / 2 * applyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
+                            RValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
+                            GValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
+                            BValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
 
                             *ptr = MakePixel((byte)RValues[s], (byte)GValues[s], (byte)BValues[s], 0xFF);
 
@@ -272,7 +269,7 @@ namespace Traumerei.Algorithme
         }
 
 
-        public void toggleAnimationAnchor()
+        public void ToggleAnimationAnchor()
         {
             animationAnchor = !animationAnchor;
         }
@@ -369,7 +366,7 @@ namespace Traumerei.Algorithme
             return imgBitmap;
         }
 
-        public void load(SKBitmap loaded)
+        public void Load(SKBitmap loaded)
         {
             imgBitmap = loaded;
             SKColor[] pixels = loaded.Pixels;

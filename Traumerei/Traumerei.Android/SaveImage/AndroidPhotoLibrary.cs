@@ -1,5 +1,4 @@
-﻿
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Android.Content;
 using Android.Media;
 using Android.OS;
