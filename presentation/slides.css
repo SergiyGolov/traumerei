@@ -1,0 +1,109 @@
+/* General */
+* {
+  text-transform: initial !important;
+}
+
+/* Title */
+.title {
+  color: #5e2baa !important;
+  font-size: 2rem;
+}
+
+/* Background */
+body {
+  background-color: #9561e2;
+}
+
+.slide {
+  color: #9561e2;
+  border-radius: 3px !important;
+}
+.slide figure {
+  height: 65%;
+}
+
+section {
+  height: 90%;
+  padding-left: 5% !important;
+  padding-right: 5% !important;
+  background-color: #fffdfa;
+  border-radius: 10px;
+}
+
+/* Labels */
+.author {
+  color: #9561e2 !important;
+}
+
+.date {
+  color: #9561e2 !important;
+}
+
+/* reveal */
+.reveal h1 {
+  color: #5e2baa;
+  vertical-align: top !important;
+  margin-bottom: 5% !important;
+  font-size: 1.5em;
+}
+.reveal h2 {
+  color: #5e2baa;
+  vertical-align: top !important;
+  margin-bottom: 5% !important;
+  font-size: 1.25em;
+}
+.reveal .progress, .reveal .controls, .reveal strong {
+  color: #5e2baa !important;
+}
+.reveal .progress {
+  height: 1.5%;
+}
+.reveal .slide-number {
+  text-align: right;
+  z-index: 31;
+  color: #fffdfa;
+  margin: 2%;
+  font-size: 2rem;
+  background-color: initial;
+  position: relative;
+  right: unset;
+  bottom: unset;
+}
+.reveal .slide-number a {
+  background-color: rgba(149, 97, 226, 0.5);
+  padding: 5px;
+  border-radius: 10px;
+}
+
+/* Defined slides */
+#title-slide {
+  border-radius: 3px !important;
+  background-position: 50% 85%;
+  background-repeat: no-repeat;
+  background-size: 20%;
+  background-image: url(resources/markdown_logo.png);
+}
+
+/* Other elements */
+.sourceCode {
+  font-size: 1.2rem !important;
+}
+
+.left {
+  left: -8.33%;
+  text-align: center;
+  float: left;
+  width: 50%;
+  z-index: -10;
+}
+
+.right {
+  left: 31.25%;
+  top: 75px;
+  text-align: center;
+  float: right;
+  z-index: -10;
+  width: 50%;
+}
+
+/*# sourceMappingURL=slides.css.map */
