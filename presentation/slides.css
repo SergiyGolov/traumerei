@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* General */
 * {
   text-transform: initial !important;
@@ -7,6 +8,10 @@
 .title {
   color: #5e2baa !important;
   font-size: 2rem;
+}
+
+#démonstration > h1 {
+  margin-bottom: 0px !important;
 }
 
 /* Background */
@@ -104,6 +109,11 @@ section {
   float: right;
   z-index: -10;
   width: 50%;
+}
+
+.screencasting {
+  border: none;
+  height: 90%;
 }
 
 /*# sourceMappingURL=slides.css.map */

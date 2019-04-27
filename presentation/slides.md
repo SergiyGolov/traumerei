@@ -8,9 +8,40 @@ date: 29 Avril 2019
 
 ## TODO
 
-# Contenu
+# Träumerei
 
-## TODO
+Signifie "rêverie"
+
+Application Xamarin
+
+Génération d'image aléatoire
+
+Animation selon l'accéléromètre
+
+# Démonstration
+
+<iframe id="CCJDMAFKB" src="http://192.168.43.1:6868" class="screencasting">
+</iframe>
+
+# Architecture
+
+--- comment c'est en xamarin ---
+
+# Génération d'image
+
+--- comment on fait ---
+
+# Optimisations
+
+--- On a rendu ça mieux quand même ---
+
+# Sauvegarde de l'image
+
+--- c'était l'enfer non de non ----
+
+# Chargement d'une image
+
+--- Ici aussi certainement ---
 
 # Sources
 
