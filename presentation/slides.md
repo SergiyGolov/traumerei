@@ -25,15 +25,77 @@ Animation selon l'accéléromètre
 
 # Architecture
 
---- comment c'est en xamarin ---
+## Xamarin
+
+Multiplaterforme
+
+Interfaces implémentées en code natif
+
+`DependencyService.get<Interface>()`
+
+# Architecture (2)
+
+## MainPage
+
+* `ImageGenerator_RandomFunctions generator`
+* `SKBitmap imgBitmap`
+
+Ajoute les gestionnaires d'événements
+
+Génère une nouvelle image au tap
 
 # Génération d'image
 
---- comment on fait ---
+Utiliation d'une liste de fonctions de fonctions de double
+
+```cs
+List<Func<Func<double, double, double>, double, double, double>> avalaibleFuncs
+```
+
+Et d'une autre avec atomic
+
+```cs
+List<Func<double, double, double>> avalaibleAtomicFuncs
+```
+
+# Génération d'image (2)
+
+Sélection aléatoire de fonctions à deux variables
+
+*Sinusïdes, exponetielles, logarithmiques,...*
+
+Une par canal de couleur
+
+Les valeurs sont ensuites assignées au Bitmap
+
+# Animations
+
+Pas d'animation pas couleur
+
+Récupération des valeurs de l'accéléromètre
+
+Modulo Trick
+
+```cs
+// For Red Canal
+int yR = (y + RYoffset) & sizeBinaryTimes;
+int xR = (x + RXoffset) & sizeBinaryTimes;
+```
+
+Regénération de l'image
 
 # Optimisations
 
---- On a rendu ça mieux quand même ---
+Modulo Trick → le binaire est plus rapide
+
+Réduction de la taille de l'image → 2ⁿ
+
+```cs
+int threadNb = Environment.ProcessorCount;
+Thread[] threads = new Thread[threadNb];
+```
+
+Génération parrallèle
 
 # Sauvegarde de l'image
 
@@ -42,6 +104,13 @@ Animation selon l'accéléromètre
 # Chargement d'une image
 
 --- Ici aussi certainement ---
+
+# Améliorations
+
+* Qu'est-ce
+* qui
+* est
+* mauvais
 
 # Sources
 
