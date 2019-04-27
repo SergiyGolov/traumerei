@@ -169,19 +169,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="sauvegarde-de-limage" class="slide level1">
 <h1>Sauvegarde de l’image</h1>
-<p>— c’était l’enfer non de non —-</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
+<a class="sourceLine" id="cb5-2" title="2">{</a>
+<a class="sourceLine" id="cb5-3" title="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
+<a class="sourceLine" id="cb5-4" title="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
+<a class="sourceLine" id="cb5-5" title="5">}</a></code></pre></div>
+<p>Implémentation spécifique à Android</p>
+<p>Pas implémenté pour IOS</p>
+</section>
+<section id="sauvergarde-de-limage-2" class="slide level1">
+<h1>Sauvergarde de l’image (2)</h1>
+<h2 id="android">Android</h2>
+<p>Plugin Permissions pour accès au système de fichier</p>
+<p><code>Environment.DirectoryPictures/Traumerei/</code></p>
+<p>Ouverture &amp; écriture dans un flux</p>
+<p><code>MediaScannerConnection.ScanFile(...)</code></p>
+<p>Vérifie que l’image est bien présentée par la galerie</p>
 </section>
 <section id="chargement-dune-image" class="slide level1">
 <h1>Chargement d’une image</h1>
-<p>— Ici aussi certainement —</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
+<a class="sourceLine" id="cb6-2" title="2">{</a>
+<a class="sourceLine" id="cb6-3" title="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
+<a class="sourceLine" id="cb6-4" title="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
+<a class="sourceLine" id="cb6-5" title="5">}</a></code></pre></div>
+<p>Aussi permissions d’accès au système de fichier</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb7-1" title="1">MainActivity.<span class="fu">Instance</span>.<span class="fu">StartActivityForResult</span>(</a>
+<a class="sourceLine" id="cb7-2" title="2">    Intent.<span class="fu">CreateChooser</span>(intent, <span class="st">&quot;Select Picture&quot;</span>),</a>
+<a class="sourceLine" id="cb7-3" title="3">    MainActivity.<span class="fu">PickImageId</span>);</a></code></pre></div>
+<p>Retourne un stream</p>
+</section>
+<section id="chargement-dune-image-2" class="slide level1">
+<h1>Chargement d’une image (2)</h1>
+<p>Lecture complète du stream</p>
+<p>Transformation en SKBitmap</p>
+<p>Chargment dans le bitmap principal</p>
+<p>L’image peut enfin être utilisé par le générateur !</p>
 </section>
 <section id="améliorations" class="slide level1">
 <h1>Améliorations</h1>
 <ul>
 <li>Qu’est-ce</li>
-<li>qui</li>
-<li>est</li>
-<li>mauvais</li>
+<li>qu’on</li>
+<li>améliore ?</li>
 </ul>
 </section>
 <section id="sources" class="slide level1">
@@ -190,8 +220,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/hakimel/reveal.js/">Reveal.js</a>, Reveal.js Github</li>
 <li><a href="https://icons8.com/icon/set/zoom-3d/nolan">icons8.com</a>, If you need some icons</li>
 <li><a href="https://pandoc.org/index.html">pandoc.org</a>, Pandoc for compilation</li>
-<li><a href="/todo">other</a></li>
 </ul>
+<blockquote>
+<p>Mettre les sources les plus intéressantes ☺</p>
+</blockquote>
 </section>
     </div>
   </div>

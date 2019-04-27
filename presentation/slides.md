@@ -99,22 +99,72 @@ Génération parrallèle
 
 # Sauvegarde de l'image
 
---- c'était l'enfer non de non ----
+```cs
+public interface IPhotoLibrary
+{
+    Task<Stream> PickPhotoAsync();
+    Task<bool> SavePhotoAsync(byte[] data, string folder, string filename);
+}
+```
+
+Implémentation spécifique à Android
+
+Pas implémenté pour IOS
+
+# Sauvergarde de l'image (2)
+
+## Android
+
+Plugin Permissions pour accès au système de fichier
+
+`Environment.DirectoryPictures/Traumerei/`
+
+Ouverture & écriture dans un flux
+
+`MediaScannerConnection.ScanFile(...)`
+
+Vérifie que l'image est bien présentée par la galerie
 
 # Chargement d'une image
 
---- Ici aussi certainement ---
+```cs
+public interface IPhotoLibrary
+{
+    Task<Stream> PickPhotoAsync();
+    Task<bool> SavePhotoAsync(byte[] data, string folder, string filename);
+}
+```
+
+Aussi permissions d'accès au système de fichier
+
+```Java
+MainActivity.Instance.StartActivityForResult(
+    Intent.CreateChooser(intent, "Select Picture"),
+    MainActivity.PickImageId);
+```
+
+Retourne un stream
+
+# Chargement d'une image (2)
+
+Lecture complète du stream
+
+Transformation en SKBitmap
+
+Chargment dans le bitmap principal
+
+L'image peut enfin être utilisé par le générateur !
 
 # Améliorations
 
 * Qu'est-ce
-* qui
-* est
-* mauvais
+* qu'on
+* améliore ?
 
 # Sources
 
 * [Reveal.js](https://github.com/hakimel/reveal.js/), Reveal.js Github
 * [icons8.com](https://icons8.com/icon/set/zoom-3d/nolan), If you need some icons
 * [pandoc.org](https://pandoc.org/index.html), Pandoc for compilation
-* [other](/todo)
+
+> Mettre les sources les plus intéressantes ☺
