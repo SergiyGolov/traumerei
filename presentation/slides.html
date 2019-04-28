@@ -18,7 +18,7 @@
   <style type="text/css">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -31,13 +31,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -106,7 +104,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="sommaire" class="slide level1">
 <h1>Sommaire</h1>
-<ul>
+<ol type="1">
 <li>But</li>
 <li>Démostration</li>
 <li>Architecture</li>
@@ -116,14 +114,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Sauvegarde d’image</li>
 <li>Chargement d’image</li>
 <li>Améliorations possibles</li>
-</ul>
+</ol>
 </section>
 <section id="träumerei---but" class="slide level1">
 <h1>Träumerei - But</h1>
-<p>Signifie “rêverie”</p>
+<p>Signifie « rêverie »</p>
 <p>Application Xamarin</p>
 <p>Génération d’image aléatoire</p>
-<p>Gestion images avec “SkiaSharp”</p>
+<p>Gestion images avec « SkiaSharp »</p>
 <p>Animation selon l’accéléromètre</p>
 </section>
 <section id="démonstration" class="slide level1">
@@ -151,33 +149,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="génération-dimage" class="slide level1">
 <h1>Génération d’image</h1>
 <p>Liste de fonctions de fonctions à 2 variables</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb1-1" data-line-number="1">List&lt;Func&lt;Func&lt;<span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;, <span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;&gt; avalaibleFuncs; <span class="co">//f</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">(f,x,y)=&gt;Math.<span class="fu">Sin</span>(Math.<span class="fu">PI</span>*<span class="fu">f</span>(x,y)) <span class="co">// exemple</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb1-1" title="1">List&lt;Func&lt;Func&lt;<span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;, <span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;&gt; avalaibleFuncs; <span class="co">//f</span></a>
+<a class="sourceLine" id="cb1-2" title="2">(f,x,y)=&gt;Math.<span class="fu">Sin</span>(Math.<span class="fu">PI</span>*<span class="fu">f</span>(x,y)) <span class="co">// exemple</span></a></code></pre></div>
 <p>Liste de fonctions à 2 variables</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb2-1" data-line-number="1">List&lt;Func&lt;<span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;&gt; avalaibleAtomicFuncs <span class="co">//af</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">(x,y)=&gt;x*y <span class="co">// exemple</span></a></code></pre></div>
-<p>x et y selon axe “mathématique” → pixel au centre de l’image en position (0;0)</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb2-1" title="1">List&lt;Func&lt;<span class="dt">double</span>, <span class="dt">double</span>, <span class="dt">double</span>&gt;&gt; avalaibleAtomicFuncs <span class="co">//af</span></a>
+<a class="sourceLine" id="cb2-2" title="2">(x,y)=&gt;x*y <span class="co">// exemple</span></a></code></pre></div>
+<p>x et y selon axe « mathématique » → pixel au centre de l’image en position (0;0)</p>
 </section>
 <section id="génération-dimage-2" class="slide level1">
 <h1>Génération d’image (2)</h1>
 <p>Et une liste d’opérations possibles</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="dt">double</span> z=<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="dt">double</span> localX=x;</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="dt">double</span> localY=y;</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">//en parcourant tous les éléments de la liste de fonctions propre </span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">//à un canal</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"> <span class="kw">switch</span> (comb)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">{</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">    <span class="kw">case</span> Combination.<span class="fu">Imbricate</span>:</a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">        <span class="kw">break</span>;</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10">    <span class="kw">case</span> Combination.<span class="fu">ReplaceX</span>:</a>
-<a class="sourceLine" id="cb3-11" data-line-number="11">        localX = <span class="fu">f</span>(af, x, y);</a>
-<a class="sourceLine" id="cb3-12" data-line-number="12">        <span class="kw">break</span>;</a>
-<a class="sourceLine" id="cb3-13" data-line-number="13">    <span class="kw">case</span> Combination.<span class="fu">ReplaceY</span>:</a>
-<a class="sourceLine" id="cb3-14" data-line-number="14">        localY = <span class="fu">f</span>(af, x, y);</a>
-<a class="sourceLine" id="cb3-15" data-line-number="15">        <span class="kw">break</span>;</a>
-<a class="sourceLine" id="cb3-16" data-line-number="16">}</a>
-<a class="sourceLine" id="cb3-17" data-line-number="17">z *= <span class="fu">f</span>(af, localX, localY);</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb3-1" title="1"><span class="dt">double</span> z=<span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="dt">double</span> localX=x;</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="dt">double</span> localY=y;</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="co">//en parcourant tous les éléments de la liste de fonctions propre</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="co">//à un canal</span></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="kw">switch</span> (comb)</a>
+<a class="sourceLine" id="cb3-7" title="7">{</a>
+<a class="sourceLine" id="cb3-8" title="8">    <span class="kw">case</span> Combination.<span class="fu">Imbricate</span>:</a>
+<a class="sourceLine" id="cb3-9" title="9">        <span class="kw">break</span>;</a>
+<a class="sourceLine" id="cb3-10" title="10">    <span class="kw">case</span> Combination.<span class="fu">ReplaceX</span>:</a>
+<a class="sourceLine" id="cb3-11" title="11">        localX = <span class="fu">f</span>(af, x, y);</a>
+<a class="sourceLine" id="cb3-12" title="12">        <span class="kw">break</span>;</a>
+<a class="sourceLine" id="cb3-13" title="13">    <span class="kw">case</span> Combination.<span class="fu">ReplaceY</span>:</a>
+<a class="sourceLine" id="cb3-14" title="14">        localY = <span class="fu">f</span>(af, x, y);</a>
+<a class="sourceLine" id="cb3-15" title="15">        <span class="kw">break</span>;</a>
+<a class="sourceLine" id="cb3-16" title="16">}</a>
+<a class="sourceLine" id="cb3-17" title="17">z *= <span class="fu">f</span>(af, localX, localY);</a></code></pre></div>
 </section>
 <section id="génération-dimage-3" class="slide level1">
 <h1>Génération d’image (3)</h1>
@@ -192,25 +190,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Pas d’animation aléatoire par couleur</p>
 <p>Récupération des valeurs de l’accéléromètre</p>
 <p>Modulo pour pas déborder de l’image</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co">// For Red Canal</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="dt">int</span> yR = (y + RYoffset) &amp; sizeBinaryTimes;</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="dt">int</span> xR = (x + RXoffset) &amp; sizeBinaryTimes;</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb4-1" title="1"><span class="co">// For Red Canal</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="dt">int</span> yR = (y + RYoffset) &amp; sizeBinaryTimes;</a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="dt">int</span> xR = (x + RXoffset) &amp; sizeBinaryTimes;</a></code></pre></div>
 <p>On décale les pixels constituant l’image avec un offset différent selon canal</p>
 </section>
 <section id="optimisations" class="slide level1">
 <h1>Optimisations</h1>
-<p>Modulo Trick → <code>a &amp; (n-1) = a % n</code> <br/>si n puissance de deux</p>
+<p>Modulo Trick → <code>a &amp; (n-1) = a % n</code> <br/><em>si n puissance de deux</em></p>
 <p>Réduction de la taille de l’image → 2ⁿ &lt; largeur/hauteur d’écran</p>
 <p>Arithmétique de pointeur pour couleurs des pixels avec opérations binaires</p>
 <p>Multi-threading CPU</p>
 </section>
 <section id="sauvegarde-de-limage" class="slide level1">
 <h1>Sauvegarde de l’image</h1>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">{</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
+<a class="sourceLine" id="cb5-2" title="2">{</a>
+<a class="sourceLine" id="cb5-3" title="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
+<a class="sourceLine" id="cb5-4" title="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
+<a class="sourceLine" id="cb5-5" title="5">}</a></code></pre></div>
 <p>Implémentation spécifique à Android</p>
 <p>Pas implémenté pour IOS</p>
 </section>
@@ -225,15 +223,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="chargement-dune-image" class="slide level1">
 <h1>Chargement d’une image</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">{</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">}</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cs"><code class="sourceCode cs"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">public</span> <span class="kw">interface</span> IPhotoLibrary</a>
+<a class="sourceLine" id="cb6-2" title="2">{</a>
+<a class="sourceLine" id="cb6-3" title="3">    Task&lt;Stream&gt; <span class="fu">PickPhotoAsync</span>();</a>
+<a class="sourceLine" id="cb6-4" title="4">    Task&lt;<span class="dt">bool</span>&gt; <span class="fu">SavePhotoAsync</span>(<span class="dt">byte</span>[] data, <span class="dt">string</span> folder, <span class="dt">string</span> filename);</a>
+<a class="sourceLine" id="cb6-5" title="5">}</a></code></pre></div>
 <p>Aussi permissions d’accès au système de fichier</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb7-1" data-line-number="1">MainActivity.<span class="fu">Instance</span>.<span class="fu">StartActivityForResult</span>(</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">    Intent.<span class="fu">CreateChooser</span>(intent, <span class="st">&quot;Select Picture&quot;</span>),</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">    MainActivity.<span class="fu">PickImageId</span>);</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb7-1" title="1">MainActivity.<span class="fu">Instance</span>.<span class="fu">StartActivityForResult</span>(</a>
+<a class="sourceLine" id="cb7-2" title="2">    Intent.<span class="fu">CreateChooser</span>(intent, <span class="st">&quot;Select Picture&quot;</span>),</a>
+<a class="sourceLine" id="cb7-3" title="3">    MainActivity.<span class="fu">PickImageId</span>);</a></code></pre></div>
 <p>Retourne un stream</p>
 </section>
 <section id="chargement-dune-image-2" class="slide level1">
@@ -246,11 +244,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="améliorations-possibles" class="slide level1">
 <h1>Améliorations possibles</h1>
 <ul>
-<li>Possibilité de recadrer image au chargement</li>
-<li>Adapter référence du accéléromètre à position dans main</li>
-<li>Ajouter fonctions disponibles pour génération</li>
-<li>Techniques traitement d’image (amplification quand image toute noire p. ex)</li>
-<li>Rendre la GUI plus sexy</li>
+<li>Recadrer l’image au chargement</li>
+<li>Modification de la position initiale de l’accéléromètre lors de la génération</li>
+<li>Plus de fonctions mathématiques</li>
+<li>Techniques de traitements d’image (Amplification)</li>
+<li>Ergonomie et expérience d’utilisation</li>
 </ul>
 </section>
 <section id="sources" class="slide level1">

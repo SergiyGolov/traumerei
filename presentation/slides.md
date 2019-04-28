@@ -6,25 +6,25 @@ date: 29 Avril 2019
 
 # Sommaire
 
-* But
-* Démostration
-* Architecture
-* Génération d'image
-* Animation
-* Optimisations
-* Sauvegarde d'image
-* Chargement d'image
-* Améliorations possibles
+1. But
+2. Démostration
+3. Architecture
+4. Génération d'image
+5. Animation
+6. Optimisations
+7. Sauvegarde d'image
+8. Chargement d'image
+9. Améliorations possibles
 
 # Träumerei - But
 
-Signifie "rêverie"
+Signifie « rêverie »
 
 Application Xamarin
 
 Génération d'image aléatoire
 
-Gestion images avec "SkiaSharp"
+Gestion images avec « SkiaSharp »
 
 Animation selon l'accéléromètre
 
@@ -69,7 +69,8 @@ Liste de fonctions à 2 variables
 List<Func<double, double, double>> avalaibleAtomicFuncs //af
 (x,y)=>x*y // exemple
 ```
-x et y selon axe "mathématique" → pixel au centre de l'image en position (0;0)
+
+x et y selon axe « mathématique » → pixel au centre de l'image en position (0;0)
 
 # Génération d'image (2)
 
@@ -79,9 +80,9 @@ Et une liste d'opérations possibles
 double z=1;
 double localX=x;
 double localY=y;
-//en parcourant tous les éléments de la liste de fonctions propre 
+//en parcourant tous les éléments de la liste de fonctions propre
 //à un canal
- switch (comb)
+switch (comb)
 {
     case Combination.Imbricate:
         break;
@@ -93,7 +94,6 @@ double localY=y;
         break;
 }
 z *= f(af, localX, localY);
-
 ```
 
 # Génération d'image (3)
@@ -126,7 +126,7 @@ On décale les pixels constituant l'image avec un offset différent selon canal
 
 # Optimisations
 
-Modulo Trick → `a & (n-1) = a % n` <br/>si n puissance de deux
+Modulo Trick → `a & (n-1) = a % n` <br/>*si n puissance de deux*
 
 Réduction de la taille de l'image → 2ⁿ < largeur/hauteur d'écran
 
@@ -194,11 +194,11 @@ Chargement dans classe générateur
 
 # Améliorations possibles
 
-* Possibilité de recadrer image au chargement
-* Adapter référence du accéléromètre à position dans main
-* Ajouter fonctions disponibles pour génération
-* Techniques traitement d'image (amplification quand image toute noire p. ex)
-* Rendre la GUI plus sexy
+* Recadrer l'image au chargement
+* Modification de la position initiale de l'accéléromètre lors de la génération
+* Plus de fonctions mathématiques
+* Techniques de traitements d'image (Amplification)
+* Ergonomie et expérience d'utilisation
 
 # Sources
 

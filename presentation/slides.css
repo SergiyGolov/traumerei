@@ -4,14 +4,19 @@
   text-transform: initial !important;
 }
 
+em {
+  color: #5e2baa;
+  font-size: 0.8em;
+}
+
+code {
+  color: #5e2baa;
+}
+
 /* Title */
 .title {
   color: #5e2baa !important;
   font-size: 2rem;
-}
-
-#démonstration > h1 {
-  margin-bottom: 0px !important;
 }
 
 /* Background */
@@ -79,14 +84,25 @@ section {
   padding: 5px;
   border-radius: 10px;
 }
+.reveal pre {
+  width: 98%;
+}
 
 /* Defined slides */
 #title-slide {
   border-radius: 3px !important;
   background-position: 50% 85%;
   background-repeat: no-repeat;
-  background-size: 20%;
+  background-size: 32%;
   background-image: url(https://i.ibb.co/2jr57nP/photo5922563200728018580.jpg);
+}
+
+#sommaire > h1 {
+  margin-bottom: 1% !important;
+}
+
+#démonstration > h1 {
+  margin-bottom: 0px !important;
 }
 
 /* Other elements */

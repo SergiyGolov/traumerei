@@ -13,14 +13,19 @@
   text-transform: initial !important;
 }
 
+em {
+  color: $purple;
+  font-size: 0.8em;
+}
+
+code {
+  color: $purple;
+}
+
 /* Title */
 .title {
   color: $purple !important;
   font-size: 2rem;
-}
-
-#démonstration > h1 {
-  margin-bottom: 0px !important;
 }
 
 /* Background */
@@ -91,6 +96,9 @@ section {
       border-radius: 10px;
     }
   }
+  pre {
+    width: 98%;
+  }
 }
 
 /* Defined slides */
@@ -98,8 +106,16 @@ section {
   border-radius: 3px !important;
   background-position: 50% 85%;
   background-repeat: no-repeat;
-  background-size: 20%;
+  background-size: 32%;
   background-image: url(https://i.ibb.co/2jr57nP/photo5922563200728018580.jpg);
+}
+
+#sommaire > h1 {
+  margin-bottom: 1% !important;
+}
+
+#démonstration > h1 {
+  margin-bottom: 0px !important;
 }
 
 /* Other elements */
