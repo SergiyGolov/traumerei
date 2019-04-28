@@ -4,17 +4,27 @@ title: Träumerei
 date: 29 Avril 2019
 ---
 
-# Table des matières
+# Sommaire
 
-## TODO
+* But
+* Démostration
+* Architecture
+* Génération d'image
+* Animation
+* Optimisations
+* Sauvegarde d'image
+* Chargement d'image
+* Améliorations possibles
 
-# Träumerei
+# Träumerei - But
 
 Signifie "rêverie"
 
 Application Xamarin
 
 Génération d'image aléatoire
+
+Gestion images avec "SkiaSharp"
 
 Animation selon l'accéléromètre
 
@@ -27,9 +37,9 @@ Animation selon l'accéléromètre
 
 ## Xamarin
 
-Multiplaterforme
+Algorithme et GUI Multiplaterforme
 
-Interfaces implémentées en code natif
+Interfaces implémentées en code natif pour chargement/sauvegarde image
 
 `DependencyService.get<Interface>()`
 
@@ -46,35 +56,65 @@ Génère une nouvelle image au tap
 
 # Génération d'image
 
-Utiliation d'une liste de fonctions de fonctions de double
+Liste de fonctions de fonctions à 2 variables
 
 ```cs
-List<Func<Func<double, double, double>, double, double, double>> avalaibleFuncs
+List<Func<Func<double, double, double>, double, double, double>> avalaibleFuncs; //f
+(f,x,y)=>Math.Sin(Math.PI*f(x,y)) // exemple
 ```
 
-Et d'une autre avec atomic
+Liste de fonctions à 2 variables
 
 ```cs
-List<Func<double, double, double>> avalaibleAtomicFuncs
+List<Func<double, double, double>> avalaibleAtomicFuncs //af
+(x,y)=>x*y // exemple
 ```
+x et y selon axe "mathématique" → pixel au centre de l'image en position (0;0)
 
 # Génération d'image (2)
 
-Sélection aléatoire de fonctions à deux variables
+Et une liste d'opérations possibles
 
-*Sinusïdes, exponetielles, logarithmiques,...*
+```cs
+double z=1;
+double localX=x;
+double localY=y;
+//en parcourant tous les éléments de la liste de fonctions propre 
+//à un canal
+ switch (comb)
+{
+    case Combination.Imbricate:
+        break;
+    case Combination.ReplaceX:
+        localX = f(af, x, y);
+        break;
+    case Combination.ReplaceY:
+        localY = f(af, x, y);
+        break;
+}
+z *= f(af, localX, localY);
 
-Une par canal de couleur
+```
 
-Les valeurs sont ensuites assignées au Bitmap
+# Génération d'image (3)
 
-# Animations
+Sélection aléatoire de fonctions
 
-Pas d'animation pas couleur
+*Sinusoïdes, exponentielles, logarithmes, valeur absolue...*
+
+Une liste par canal de couleur avec une taille de liste aléatoire bornée
+
+Les valeurs sont ensuite stockés dans un tableau par canal de couleur
+
+Et finalement assignés au Bitmap
+
+# Animation
+
+Pas d'animation aléatoire par couleur
 
 Récupération des valeurs de l'accéléromètre
 
-Modulo Trick
+Modulo pour pas déborder de l'image
 
 ```cs
 // For Red Canal
@@ -82,20 +122,17 @@ int yR = (y + RYoffset) & sizeBinaryTimes;
 int xR = (x + RXoffset) & sizeBinaryTimes;
 ```
 
-Regénération de l'image
+On décale les pixels constituant l'image avec un offset différent selon canal
 
 # Optimisations
 
-Modulo Trick → le binaire est plus rapide
+Modulo Trick → `a & (n-1) = a % n` <br/>si n puissance de deux
 
-Réduction de la taille de l'image → 2ⁿ
+Réduction de la taille de l'image → 2ⁿ < largeur/hauteur d'écran
 
-```cs
-int threadNb = Environment.ProcessorCount;
-Thread[] threads = new Thread[threadNb];
-```
+Arithmétique de pointeur pour couleurs des pixels avec opérations binaires
 
-Génération parrallèle
+Multi-threading CPU
 
 # Sauvegarde de l'image
 
@@ -111,7 +148,7 @@ Implémentation spécifique à Android
 
 Pas implémenté pour IOS
 
-# Sauvergarde de l'image (2)
+# Sauvegarde de l'image (2)
 
 ## Android
 
@@ -151,20 +188,24 @@ Lecture complète du stream
 
 Transformation en SKBitmap
 
-Chargment dans le bitmap principal
+Chargement dans le bitmap principal
 
-L'image peut enfin être utilisé par le générateur !
+Chargement dans classe générateur
 
-# Améliorations
+# Améliorations possibles
 
-* Qu'est-ce
-* qu'on
-* améliore ?
+* Possibilité de recadrer image au chargement
+* Adapter référence du accéléromètre à position dans main
+* Ajouter fonctions disponibles pour génération
+* Techniques traitement d'image (amplification quand image toute noire p. ex)
+* Rendre la GUI plus sexy
 
 # Sources
 
 * [Reveal.js](https://github.com/hakimel/reveal.js/), Reveal.js Github
-* [icons8.com](https://icons8.com/icon/set/zoom-3d/nolan), If you need some icons
 * [pandoc.org](https://pandoc.org/index.html), Pandoc for compilation
-
-> Mettre les sources les plus intéressantes ☺
+* [jeremykun.com](https://jeremykun.com/2012/01/01/random-psychedelic-art/), Algorithme
+* [reedbeta.com](http://reedbeta.com/blog/generating-abstract-images-with-random-functions/), Algorithme
+* [docs.microsoft.com](https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/), tutos SkiaSharp
+* [github.com/jamesmontemagno](https://github.com/jamesmontemagno/PermissionsPlugin), plugin permissions
+* [jacksondunstan.com](https://jacksondunstan.com/articles/1946), modulo trick

@@ -1,4 +1,4 @@
-all: clean scss slides
+all: scss slides
 
 slides:
 	pandoc -t revealjs -s -o slides.html slides.md  -V revealjs-url=https://revealjs.com -V css=slides.css --include-after-body=configure.html
