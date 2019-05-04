@@ -45,6 +45,11 @@ namespace Traumerei.Algorithme
             imgBitmap = new SKBitmap(Width, Height);
         }
 
+
+        /// <summary>
+        /// Generates random colors for every pixel (first version of the generator)
+        /// </summary>
+        /// <returns></returns>
         public SKBitmap Generate()
         {
             SKColor color = new SKColor(0, 0, 0);

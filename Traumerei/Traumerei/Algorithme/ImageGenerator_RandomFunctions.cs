@@ -117,6 +117,15 @@ namespace Traumerei.Algorithme
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">x coordinate of the pixel</param>
+        /// <param name="y">y coordinate of the pixel</param>
+        /// <param name="atomicFuncList">random generated list of functions with the shape: f(x,y)=z, with x,y and z as doubles</param>
+        /// <param name="funcList">random generated list of function of functions with the shape: f(g,x,y)=z, with x,y and z as doubles and g as a function of shape f(x,y)=z</param>
+        /// <param name="combList">random generated list of possible "combinations"</param>
+        /// <returns>color value for a given pixel, depending on his position in the image and his color channel</returns>
         private double ApplyFuncsFromList(double x, double y,
             List<Func<double, double, double>> atomicFuncList,
             List<Func<Func<double, double, double>, double, double, double>> funcList,
@@ -148,6 +157,12 @@ namespace Traumerei.Algorithme
             return z;
         }
 
+
+        /// <summary>
+        /// Set the dimensions boundaries of the image for the generator
+        /// </summary>
+        /// <param name="width">width of the image to generate</param>
+        /// <param name="height">height of the image to generate</param>
         public new void SetDimensions(int width, int height)
         {
             Width = width;
@@ -161,11 +176,23 @@ namespace Traumerei.Algorithme
 
         }
 
+        /// <summary>
+        /// generate color from r,g,b,a values using bitwise operations
+        /// </summary>
+        /// <param name="red">red value for a given pixel</param>
+        /// <param name="green">green value for a given pixel</param>
+        /// <param name="blue">blue value for a given pixel</param>
+        /// <param name="alpha">alpha value for a given pixel</param>
+        /// <returns>color for a pixel</returns>
         //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/pixel-bits
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         uint MakePixel(byte red, byte green, byte blue, byte alpha) =>
             (uint)((alpha << 24) | (blue << 16) | (green << 8) | red);
 
+        /// <summary>
+        /// Generates a new image, using a maximum of threads avalaible on the device
+        /// </summary>
+        /// <returns>a SKBitmap representing the generated image</returns>
         public new SKBitmap Generate()
         {
             funcListR.Clear();
@@ -189,12 +216,14 @@ namespace Traumerei.Algorithme
 
             _random = new Random();
 
+            //How much is offset a given color channel each animation step ?
             animationFactorR = 5 + _random.Next(15);
             animationFactorG = 5 + _random.Next(15);
             animationFactorB = 5 + _random.Next(15);
 
             Array combinationValues = Enum.GetValues(typeof(Combination));
 
+            //Max function list size
             maxDepth = _random.Next(5) + 3;
 
             for (int i = 0; i < _random.Next(maxDepth) + 3; i++)
@@ -241,15 +270,20 @@ namespace Traumerei.Algorithme
 
                         ptr += s;
 
+                        //"entrelacement" pattern as seen in the CUDA course, we iterate on a flattened matrix representing the image color pointers
+                        //Each thread does the same operation but on different data
                         while (s < wh)
                         {
+                            //row-major conversion from an index in a flattened matrix (s) to the matrix indexes (x,y)
                             int y = (s / Width);
                             int x = s - (y * Width);
 
-                            RValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
-                            GValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
-                            BValues[s] = Width / 2 * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
+                            //It is useful to save the values in separated arrays, to use them in the animation later
+                            RValues[s] = Width  * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListR, funcListR, combinationListR);
+                            GValues[s] = Width  * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListG, funcListG, combinationListG);
+                            BValues[s] = Width  * ApplyFuncsFromList(transformX(x), transformY(y), atomicFuncListB, funcListB, combinationListB);
 
+                            //pointer trick from the SkiaSharp documentation
                             *ptr = MakePixel((byte)RValues[s], (byte)GValues[s], (byte)BValues[s], 0xFF);
 
                             s += threadNb;
@@ -260,6 +294,7 @@ namespace Traumerei.Algorithme
                 threads[threadId].Start(threadId);
             }
 
+            //Wait on all threads to finish the generation, before return the bitmap
             for (int threadId = 0; threadId < threadNb; threadId++)
             {
                 threads[threadId].Join();
@@ -268,16 +303,25 @@ namespace Traumerei.Algorithme
             return imgBitmap;
         }
 
-
+        /// <summary>
+        /// Toggles the animation anchor
+        /// </summary>
         public void ToggleAnimationAnchor()
         {
             animationAnchor = !animationAnchor;
         }
 
-
+        /// <summary>
+        /// Called to shift all the pixels to animate the picture
+        /// </summary>
+        /// <param name="deltaX">deltaX from accelerometer</param>
+        /// <param name="deltaY">deltaY from accelerometer</param>
+        /// <param name="deltaZ">deltaZ from accelerometer</param>
+        /// <returns></returns>
         public new SKBitmap Step(float deltaX, float deltaY, float deltaZ)
         {
 
+            //Offset in pixels by which every pixel is shifted
             int local_RXoffset = (int)(deltaX * animationFactorR);
             int local_RYoffset = (int)(deltaY * animationFactorR);
 
@@ -334,7 +378,7 @@ namespace Traumerei.Algorithme
                             int y = (s / Width);
                             int x = s - (y * Width);
 
-                            //source for bitwise and modulo trick: https://jacksondunstan.com/articles/1946
+                            //source for bitwise "and" modulo trick: https://jacksondunstan.com/articles/1946
                             int yR = (y + RYoffset) & sizeBinaryTimes;
                             int xR = (x + RXoffset) & sizeBinaryTimes;
 
@@ -344,6 +388,8 @@ namespace Traumerei.Algorithme
                             int yB = (y + BYoffset) & sizeBinaryTimes;
                             int xB = (x + BXoffset) & sizeBinaryTimes;
 
+
+                            //Transforms x,y coordinates to "flattened" array index
                             int indexR = xR + yR * Width;
                             int indexG = xG + yG * Width;
                             int indexB = xB + yB * Width;
@@ -366,6 +412,11 @@ namespace Traumerei.Algorithme
             return imgBitmap;
         }
 
+
+        /// <summary>
+        /// Loads an image into the generator
+        /// </summary>
+        /// <param name="loaded">The bitmap that was loaded from the device gallery</param>
         public void Load(SKBitmap loaded)
         {
             imgBitmap = loaded;
@@ -373,7 +424,7 @@ namespace Traumerei.Algorithme
 
             int threadNb = Environment.ProcessorCount;
             Thread[] threads = new Thread[threadNb];
-           
+
             for (int threadId = 0; threadId < threadNb; threadId++)
             {
                 threads[threadId] = new Thread((i) =>
@@ -398,6 +449,7 @@ namespace Traumerei.Algorithme
                 threads[threadId].Join();
             }
 
+            //resets the animation values
             RXoffset = 0;
             RYoffset = 0;
             GXoffset = 0;

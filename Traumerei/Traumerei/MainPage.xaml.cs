@@ -47,6 +47,10 @@ namespace Traumerei
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
         }
 
+
+        /// <summary>
+        /// Starts the accelerometer
+        /// </summary>
         private void StartAccelerometer()
         {
             try
@@ -64,6 +68,10 @@ namespace Traumerei
             }
         }
 
+
+        /// <summary>
+        /// Stops the accelerometer
+        /// </summary>
         private void StopAccelerometer()
         {
             try
@@ -81,6 +89,12 @@ namespace Traumerei
             }
         }
 
+
+        /// <summary>
+        /// Toggles the accelerometer, this is a way to toggle the animation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void OnAnimationToggledEvent(object sender, EventArgs args)
         {
             animation = !animation;
@@ -94,11 +108,22 @@ namespace Traumerei
             }
         }
 
+
+        /// <summary>
+        /// Toggles the animation anchor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         public void OnAnimationAnchorToggledEvent(object sender, EventArgs args)
         {
             generator.ToggleAnimationAnchor();
         }
 
+        /// <summary>
+        /// Sends the accelerometer data to the generator object to apply the animation effect on the image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         // source: https://docs.microsoft.com/en-us/xamarin/essentials/accelerometer
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
@@ -117,20 +142,10 @@ namespace Traumerei
 
         }
 
+
         /// <summary>
-        /// Change the background color of an image with a
-        /// random color
+        /// Calls the generate method of the generator and display the result in the GUI
         /// </summary>
-        /// <param name="img">image target</param>
-        private static void ChangeBackground(Image img)
-        {
-            Random r = new Random();
-            Color randomColor = new Color(r.NextDouble(), r.NextDouble(), r.NextDouble());
-            Debug.Print("Color: " + randomColor.ToString());
-
-            img.BackgroundColor = randomColor;
-        }
-
         private async void DrawRandomImageAsync()
         {
 
@@ -140,9 +155,10 @@ namespace Traumerei
             ActivityIndicator runningIndicator = FindByName("runningIndicator") as ActivityIndicator;
 
             runningIndicator.IsRunning = true;
-            await Task.Yield();
+            await Task.Yield(); //This is a way to see the running indicator animation while the image is generated
 
 
+            //If first time called, sets the dimensions of the image
             if (imgBitmap == null)
             {
                 width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
@@ -176,6 +192,12 @@ namespace Traumerei
             StartAccelerometer();
         }
 
+
+        /// <summary>
+        /// Called to paint the canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void OnPainting(object sender, SKPaintSurfaceEventArgs args)
         {
             SKImageInfo info = args.Info;
@@ -201,8 +223,14 @@ namespace Traumerei
             }
         }
 
+
+        /// <summary>
+        /// Save the image on the phone
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         //source: https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/bitmaps/saving
-        async void saveImage(object sender, EventArgs args)
+        private async void saveImage(object sender, EventArgs args)
         {
             if (imgBitmap != null)
             {
@@ -237,7 +265,12 @@ namespace Traumerei
             }
         }
 
-        async void LoadImage(object sender, EventArgs args)
+        /// <summary>
+        /// Load an image from the phone
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private async void LoadImage(object sender, EventArgs args)
         {
             IPhotoLibrary photoLibrary = DependencyService.Get<IPhotoLibrary>();
 
@@ -251,6 +284,8 @@ namespace Traumerei
                         if(animation)
                             StopAccelerometer();
 
+
+                        //Set the image dimensions
                         width = (int)imgGenerated.CanvasSize.ToFormsSize().Width;
                         height = (int)imgGenerated.CanvasSize.ToFormsSize().Height;
 
@@ -270,6 +305,7 @@ namespace Traumerei
                         generator.SetDimensions(width, height);
 
 
+                        // Resize the loaded image
                         //source: https://stackoverflow.com/questions/48422724/fastest-way-to-scale-an-skimage-skiasharp
                         SKImageInfo info = new SKImageInfo(width, height, SKColorType.Rgba8888);
 
